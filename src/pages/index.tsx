@@ -1,7 +1,12 @@
-import React from 'react';
+import React from "react";
+import Dashboard from "./User/Dashboard";
 
 function index() {
-  return <div>Hello world</div>;
+  return (
+    <>
+      <Dashboard/>
+    </>
+  );
 }
 
 export default index;
