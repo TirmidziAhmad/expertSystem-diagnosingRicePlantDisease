@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 const LoginPage = () => {
-  const router = useRouter();
 
   return (
     <div className="flex justify-center items-center bg-cover">
@@ -24,7 +22,6 @@ const LoginPage = () => {
             />
           </div>
           <button
-            onClick={() => router.push("/")}
             className="mt-2 bg-olive font-medium text-white text-center w-full px-2 py-2 rounded-md"
           >
             Masuk

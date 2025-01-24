@@ -1,11 +1,11 @@
-import RiwayatLayout from "../../../components/layout/User/Riwayat";
+import RiwayatLayout from "../../../components/layout/user/riwayat";
 
 const Riwayat = () => {
-    return (
-        <>
-       <RiwayatLayout />
-        </>
-    )
-}
+  return (
+    <>
+      <RiwayatLayout />
+    </>
+  );
+};
 
 export default Riwayat;
