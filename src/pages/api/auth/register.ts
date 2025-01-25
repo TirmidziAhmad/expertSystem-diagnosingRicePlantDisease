@@ -1,46 +1,58 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import prisma from '../../../lib/prisma'; // Assuming you've set up Prisma client in lib/prisma.ts
+import { z } from 'zod';
 
-const prisma = new PrismaClient();
+// Zod schema for validation
+const registrationSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  username: z.string().min(4, { message: 'Username must be at least 4 characters long' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+});
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+type RegistrationInput = z.infer<typeof registrationSchema>;
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { email, password } = req.body;
-
     try {
-      // Hash the password
+      // Validate input with Zod schema
+      const body: RegistrationInput = registrationSchema.parse(req.body);
+
+      const { username, email, password } = body; // Destructure after validation
+
+      // Check if email already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email already exists' });
+      }
+
+      // Hash the password before saving
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create a new user in the database
+      // Create new user
       const newUser = await prisma.user.create({
         data: {
+          username,
           email,
           password: hashedPassword,
+          roleId: 2,
         },
       });
 
-      return res.status(201).json({ message: 'User registered successfully', user: newUser });
-    } catch (error: unknown) {
-      if (isPrismaError(error)) {
-        // Handle Prisma-specific errors
-        if (error.code === 'P2002') {
-          return res.status(400).json({ error: 'Email already exists' });
-        }
+      // Send response
+      return res.status(201).json({ message: 'User created successfully', user: newUser });
+    } catch (error) {
+      // Handle Zod validation errors
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Validation error', errors: error.errors });
       }
 
-      console.error('Unexpected error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      // Handle other errors
+      return res.status(500).json({ message: 'Internal server error', error: error });
     }
+  } else {
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
-
-  res.setHeader('Allow', ['POST']);
-  return res.status(405).end(`Method ${req.method} Not Allowed`);
-};
-
-export default handler;
-
-// Helper function to check if the error is a Prisma error
-function isPrismaError(error: unknown): error is { code: string } {
-  return typeof error === 'object' && error !== null && 'code' in error;
 }

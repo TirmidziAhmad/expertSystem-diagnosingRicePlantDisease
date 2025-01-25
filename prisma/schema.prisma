@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,8 +8,67 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
+  id       Int      @id @default(autoincrement())
+  username     String   @db.VarChar
+  email    String   @unique @db.VarChar
+  password String   @db.VarChar
+  roleId   Int
   createdAt DateTime @default(now())
+  role     Role     @relation(fields: [roleId], references: [id])
+  consultations Consultation[]
+
+  @@map("users")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique @db.VarChar
+  users User[]
+
+  @@map("roles")
+}
+
+model Disease {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique @db.VarChar
+  description String          @db.Text
+  solutions   String?         @db.Text
+  symptoms    DiseaseSymptom[]
+  consultations Consultation[]
+
+  @@map("diseases")
+}
+
+model Symptom {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique @db.VarChar
+  description String          @db.Text
+  diseases    DiseaseSymptom[]
+
+  @@map("symptoms")
+}
+
+model DiseaseSymptom {
+  id          Int      @id @default(autoincrement())
+  diseaseId   Int
+  symptomId   Int
+  probability Float
+  disease     Disease @relation(fields: [diseaseId], references: [id])
+  symptom     Symptom @relation(fields: [symptomId], references: [id])
+
+  @@unique([diseaseId, symptomId])
+  @@map("disease_symptoms")
+}
+
+model Consultation {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  userInput Json
+  results   Json?
+  diseaseId Int?
+  user      User     @relation(fields: [userId], references: [id])
+  disease   Disease? @relation(fields: [diseaseId], references: [id])
+
+  @@map("consultations")
 }
