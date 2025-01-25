@@ -1,11 +1,11 @@
-import DiagnosaLayout from "../../../components/layout/User/Diagnosa";
+import DiagnosaLayout from "../../../components/layout/user/diagnosa";
 
 const Diagnosa = () => {
-    return (
-        <>
-       <DiagnosaLayout/>
-        </>
-    )
-}
+  return (
+    <>
+      <DiagnosaLayout />
+    </>
+  );
+};
 
 export default Diagnosa;

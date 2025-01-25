@@ -1,11 +1,11 @@
-import TentangLayout from "../../../components/layout/User/Tentang";
+import TentangLayout from "../../../components/layout/user/tentang";
 
 const Tentang = () => {
-    return (
-        <>
-        <TentangLayout />
-        </>
-    )
-}
+  return (
+    <>
+      <TentangLayout />
+    </>
+  );
+};
 
 export default Tentang;

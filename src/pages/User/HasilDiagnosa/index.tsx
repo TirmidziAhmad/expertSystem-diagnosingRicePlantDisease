@@ -1,11 +1,11 @@
-import HasilDiagnosaa from "../../../components/layout/User/HasilDiagnosaa";
+import HasilDiagnosaa from "../../../components/layout/user/hasildiagnosaa";
 
 const HasilDiagnosa = () => {
-    return (
-        <>
-       <HasilDiagnosaa/>
-        </>
-    )
-}
+  return (
+    <>
+      <HasilDiagnosaa />
+    </>
+  );
+};
 
 export default HasilDiagnosa;

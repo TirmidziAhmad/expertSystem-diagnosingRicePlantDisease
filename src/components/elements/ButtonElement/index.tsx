@@ -1,15 +1,15 @@
 import { HStack } from "@chakra-ui/react";
 import { Button } from "@/components/ui/button";
 import { IconType } from "react-icons";
-import Link from "next/link";
 
 interface ButtonElementProps {
-  label: string; 
-  icon: IconType; 
-  variant?: "solid" | "outline"; 
-  colorScheme?: string; 
-  bg? : string;
-  link? : string;
+  label: string;
+  icon: IconType;
+  variant?: "solid" | "outline";
+  colorScheme?: string;
+  bg?: string;
+  link?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ButtonElement: React.FC<ButtonElementProps> = ({
@@ -17,24 +17,26 @@ const ButtonElement: React.FC<ButtonElementProps> = ({
   icon: Icon,
   variant = "solid",
   colorScheme = "teal",
-  bg= "transparent",
+  bg = "transparent",
   link,
+  onClick,
 }) => {
- 
   return (
-    <HStack  width="fit-content" className={`text-white text-lg font-semibold gap-4 px-4 py-2 rounded-md mt-4 ${bg}`}>
-      <Icon size={20} color={variant === "solid" ? colorScheme : `${colorScheme}.500`} /> 
-      {link && (
-        <Link href={link}>
-          <div>
-      <Button 
-        colorScheme={colorScheme} 
-        variant={variant}
-      >
-        {label}
-      </Button>
-      </div>
-        </Link>
+    <HStack
+      width="fit-content"
+      className={`text-white text-base font-semibold gap-4 py-2 px-4 rounded-md ${bg}`}
+    >
+      <Icon size={16} color={variant === "solid" ? colorScheme : `${colorScheme}.500`} />
+      {link ? (
+        <a href={link}>
+          <Button colorScheme={colorScheme} variant={variant} onClick={onClick}>
+            {label}
+          </Button>
+        </a>
+      ) : (
+        <Button colorScheme={colorScheme} variant={variant} onClick={onClick}>
+          {label}
+        </Button>
       )}
     </HStack>
   );

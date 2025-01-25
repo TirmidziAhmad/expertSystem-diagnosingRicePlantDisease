@@ -7,7 +7,8 @@ interface CardPengetahuanProps {
 
 const CardPengetahuan: React.FC<CardPengetahuanProps> = ({ title, description }) => {
   return (
-    <div className="bg-white shadow-sm shadow-dark rounded-lg p-4 border mt-4">
+    <div>
+      <div className="bg-white shadow-sm shadow-dark rounded-lg p-4 border mt-4">
       <img
         src="/image.svg"
         alt={title}
@@ -19,6 +20,8 @@ const CardPengetahuan: React.FC<CardPengetahuanProps> = ({ title, description })
         Detail
       </button>
     </div>
+    </div>
+    
   );
 };
 

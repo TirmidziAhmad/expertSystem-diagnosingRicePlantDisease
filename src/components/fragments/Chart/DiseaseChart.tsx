@@ -22,7 +22,7 @@ const chartData = [
 ]
 
 export default function DiseaseChart() {
-  const totalCases = chartData.reduce((acc, curr) => acc + curr.cases, 0); // Total kasus untuk menghitung persentase
+  const totalCases = chartData.reduce((acc, curr) => acc + curr.cases, 0);
 
   return (
     <Card className="w-full max-w-xl mx-auto bg-white shadow-sm shadow-olive mt-4">
