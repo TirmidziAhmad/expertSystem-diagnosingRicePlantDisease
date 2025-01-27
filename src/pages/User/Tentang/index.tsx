@@ -1,4 +1,4 @@
-import TentangLayout from "../../../components/layout/user/tentang";
+import TentangLayout from '../../../components/layout/User/Tentang';
 
 const Tentang = () => {
   return (

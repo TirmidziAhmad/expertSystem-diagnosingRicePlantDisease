@@ -16,9 +16,10 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password }: LoginRequest = req.body;
 
   try {
-    // Find user by email
+    // Find user by email and include role name
     const user = await prisma.user.findUnique({
       where: { email },
+      include: { role: true }, // Include related role table
     });
 
     if (!user) {
@@ -39,7 +40,8 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       {
         id: user.id,
         email: user.email,
-        role: user.roleId,
+        roleId: user.roleId,
+        roleName: user.role.name, // Include role name in the token if needed
       },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
@@ -52,7 +54,7 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: user.id,
         email: user.email,
         username: user.username,
-        role: user.roleId,
+        role: user.role.name, // Return role name
       },
     });
   } catch (error) {

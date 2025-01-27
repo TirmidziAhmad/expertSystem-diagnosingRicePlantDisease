@@ -1,4 +1,4 @@
-import RiwayatLayout from "../../../components/layout/user/riwayat";
+import RiwayatLayout from '../../../components/layout/User/Riwayat';
 
 const Riwayat = () => {
   return (

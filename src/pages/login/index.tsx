@@ -19,8 +19,15 @@ const LoginPage: React.FC = () => {
 
       if (response.status === 200) {
         const { token } = response.data;
-        Cookies.set('authToken', token, { expires: 1 / 24 });
-        router.push('/');
+        const { username, role } = response.data.user;
+        Cookies.set('token', token, { expires: 1 / 24 });
+        Cookies.set('username', username, { expires: 1 / 24 });
+        Cookies.set('role', role, { expires: 1 / 24 });
+        if (role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/user/dashboard');
+        }
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -28,8 +35,8 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className='flex justify-center items-center bg-cover'>
-      <div className='text-olive border-beige border rounded-md p-8 shadow-2xl backdrop-filter backdrop-blur-sm bg-opacity-40 relative '>
+    <div className='flex justify-around items-center bg-cover h-screen'>
+      <div className='text-olive border-beige border rounded-md p-8 shadow-2xl backdrop-filter backdrop-blur-sm bg-opacity-40 '>
         <h1 className='font-bold text-4xl text-center mb-6'>Masuk</h1>
         {error && <div className='text-red-600 mb-4 text-center text-sm'>{error}</div>}
         <div>
@@ -61,12 +68,12 @@ const LoginPage: React.FC = () => {
           <div className='flex flex-row text-sm item-center text-center justify-center mt-4'>
             <p>Apakah belum punya akun?</p>
             <p className='font-semibold'>
-              <Link href='/User/Regis'>Daftar disini!</Link>
+              <Link href='/register'>Daftar disini!</Link>
             </p>
           </div>
         </div>
       </div>
-      <Image src='/login-ilustration.jpg' alt='Login Illustration' width={700} height={500} className='w-[140vh] mt-5' />
+      <Image src='/login-ilustration.jpg' alt='Login Illustration' width={800} height={800} className=' mt-5' />
     </div>
   );
 };

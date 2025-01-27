@@ -1,4 +1,4 @@
-import PengetahuanLayout from "../../../components/layout/user/pengetahuan";
+import PengetahuanLayout from '../../../components/layout/User/Pengetahuan';
 
 const Pengetahuan = () => {
   return (

@@ -1,12 +1,13 @@
-import React from "react";
-import Dashboard from "./User/Dashboard";
+import React from 'react';
+import Dashboard from './user/dashboard';
+import ProtectedRoute from '@/middleware/protectedroute';
 
 function index() {
   return (
     <>
-      <Dashboard/>
+      <Dashboard />
     </>
   );
 }
 
-export default index;
+export default ProtectedRoute(index);

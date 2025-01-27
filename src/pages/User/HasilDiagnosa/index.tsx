@@ -1,4 +1,4 @@
-import HasilDiagnosaa from "../../../components/layout/user/hasildiagnosaa";
+import HasilDiagnosaa from '../../../components/layout/User/HasilDiagnosaa';
 
 const HasilDiagnosa = () => {
   return (
