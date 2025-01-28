@@ -22,30 +22,30 @@ const CardTotal: React.FC = () => {
     fetchData();
   });
   return (
-    <div className='mt-3 gap-4 h-36 w-full flex '>
-      <Box className={`bg-beige border rounded-lg py-4 px-6 mb-2 w-full justify-center items-center`}>
+    <div className='mt-3 gap-3 w-full flex '>
+      <Box className={`bg-beige border rounded-lg p-5 w-full justify-center items-center`}>
         <Flex direction='row' align='center' justify='flex-start'>
           <Image src='/total-gejala.svg' alt='gejala' className='w-16 mr-4' />
           <Flex direction='column' ml={6} color='white'>
-            <Text className='text-2xl font-semibold'>Total Gejala</Text>
+            <Text className='text-xl font-semibold'>Total Gejala</Text>
             <Text className='text-2xl font-bold'>{totalGejala}</Text>
           </Flex>
         </Flex>
       </Box>
-      <Box className={`bg-beige border rounded-lg py-4 px-6 mb-2 w-full justify-center items-center`}>
+      <Box className={`bg-olive border rounded-lg p-5 w-full justify-center items-center`}>
         <Flex direction='row' align='center' justify='flex-start'>
           <Image src='/total-penyakit.svg' alt='gejala' className='w-16 mr-4' />
           <Flex direction='column' ml={6} color='white'>
-            <Text className='text-2xl font-semibold'>Total Penyakit</Text>
+            <Text className='text-xl font-semibold'>Total Penyakit</Text>
             <Text className='text-2xl font-bold'>{totalPenyakit}</Text>
           </Flex>
         </Flex>
       </Box>
-      <Box className={`bg-beige border rounded-lg py-4 px-6 mb-2 w-full justify-center items-center`}>
+      <Box className={`bg-sand border rounded-lg p-5 w-full justify-center items-center`}>
         <Flex direction='row' align='center' justify='flex-start'>
           <Image src='/total-pengetahuan.svg' alt='gejala' className='w-16 mr-4' />
           <Flex direction='column' ml={6} color='white' className='justify-center'>
-            <Text className='text-2xl font-semibold'>Total Pengetahuan</Text>
+            <Text className='text-xl font-semibold'>Total Pengetahuan</Text>
             <Text className='text-2xl font-bold'>{totalPengetahuan}</Text>
           </Flex>
         </Flex>

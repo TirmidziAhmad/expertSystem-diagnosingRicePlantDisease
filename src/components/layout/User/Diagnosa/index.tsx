@@ -25,7 +25,10 @@ const DiagnosaLayout = () => {
             />
           </section>
           <TableDiagnosa />
-          <ButtonElement bg='bg-olive' label='Mulai Diagnosa' icon={FaSearch} variant='outline' colorScheme='teal' link='/User/HasilDiagnosa' />
+          <div className='flex justify-end mt-3'>
+            <ButtonElement bg='bg-olive' label='Mulai Diagnosa' icon={FaSearch} variant='outline' colorScheme='teal' link='/User/HasilDiagnosa' />
+          </div>
+
           <Footer />
         </main>
       </div>

@@ -41,7 +41,9 @@ model Disease {
 
 model Symptom {
   id          Int             @id @default(autoincrement())
+  code String  @unique @db.VarChar    
   name        String          @unique @db.VarChar
+  image       String
   description String          @db.Text
   diseases    DiseaseSymptom[]
 

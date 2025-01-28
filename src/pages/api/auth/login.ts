@@ -38,7 +38,7 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const token = jwt.sign(
       {
-        id: user.id,
+        userId: user.id,
         email: user.email,
         roleId: user.roleId,
         roleName: user.role.name, // Include role name in the token if needed
@@ -51,7 +51,7 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       message: 'Login successful',
       token,
       user: {
-        id: user.id,
+        userId: user.id,
         email: user.email,
         username: user.username,
         role: user.role.name, // Return role name

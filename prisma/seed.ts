@@ -1,95 +1,128 @@
-import { prisma } from '../lib/prisma';
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt'; // Import bcrypt
+
+const prisma = new PrismaClient();
 
 async function main() {
-  // Seed roles
-  const roles = await prisma.role.createMany({
-    data: [
-      { id: 1, name: 'admin' },
-      { id: 2, name: 'user' },
-    ],
-    skipDuplicates: true, // Avoids duplicate errors if run multiple times
+  // Define a function to hash passwords
+  const hashPassword = async (password: string): Promise<string> => {
+    const saltRounds = 10; // Adjust this as needed
+    return bcrypt.hash(password, saltRounds);
+  };
+
+  // Seed Roles
+  const adminRole = await prisma.role.create({
+    data: {
+      name: 'admin',
+    },
   });
 
-  console.log('Roles seeded:', roles);
-
-  // Seed users
-  const users = await prisma.user.createMany({
-    data: [
-      {
-        id: 1,
-        username: 'admin_user',
-        email: 'admin@example.com',
-        password: 'hashed_password_admin', // Replace with a hashed password
-        roleId: 1,
-      },
-      {
-        id: 2,
-        username: 'regular_user',
-        email: 'user@example.com',
-        password: 'hashed_password_user', // Replace with a hashed password
-        roleId: 2,
-      },
-    ],
-    skipDuplicates: true,
+  const userRole = await prisma.role.create({
+    data: {
+      name: 'user',
+    },
   });
 
-  console.log('Users seeded:', users);
+  // Hash passwords
+  const hashedAdminPassword = await hashPassword('admin123');
+  const hashedUserPassword = await hashPassword('user123');
 
-  // Seed diseases
-  const diseases = await prisma.disease.createMany({
-    data: [
-      {
-        id: 1,
-        name: 'Rice Blast',
-        description: 'A fungal disease causing leaf spots and yield loss.',
-        solutions: 'Apply fungicides and use resistant varieties',
-      },
-      {
-        id: 2,
-        name: 'Bacterial Leaf Blight',
-        description: 'A bacterial disease that causes leaf wilting and yellowing.',
-        solutions: 'Use disease-free seeds and apply appropriate antibiotics',
-      },
-    ],
-    skipDuplicates: true,
+  // Seed Users
+  const adminUser = await prisma.user.create({
+    data: {
+      username: 'admin',
+      email: 'admin@gmail.com',
+      password: hashedAdminPassword,
+      roleId: adminRole.id,
+    },
   });
 
-  console.log('Diseases seeded:', diseases);
-
-  // Seed symptoms
-  const symptoms = await prisma.symptom.createMany({
-    data: [
-      {
-        id: 1,
-        name: 'Leaf Spots',
-        description: 'Small, dark brown spots on leaves.',
-      },
-      {
-        id: 2,
-        name: 'Leaf Yellowing',
-        description: 'Yellowing and wilting of leaves.',
-      },
-    ],
-    skipDuplicates: true,
+  const regularUser = await prisma.user.create({
+    data: {
+      username: 'user',
+      email: 'user@gmail.com',
+      password: hashedUserPassword,
+      roleId: userRole.id,
+    },
   });
 
-  console.log('Symptoms seeded:', symptoms);
-
-  // Seed disease symptoms
-  const diseaseSymptoms = await prisma.diseaseSymptom.createMany({
-    data: [
-      { id: 1, diseaseId: 1, symptomId: 1, probability: 0.8 },
-      { id: 2, diseaseId: 2, symptomId: 2, probability: 0.9 },
-    ],
-    skipDuplicates: true,
+  // Seed Symptoms
+  const feverSymptom = await prisma.symptom.create({
+    data: {
+      code: 'G001',
+      name: 'Fever',
+      image: '/bg.png',
+      description: 'Elevated body temperature',
+    },
   });
 
-  console.log('Disease Symptoms seeded:', diseaseSymptoms);
+  const coughSymptom = await prisma.symptom.create({
+    data: {
+      code: 'G002',
+      name: 'Cough',
+      image: '/bg.png',
+      description: 'A sudden expulsion of air from the lungs',
+    },
+  });
+
+  // Seed Diseases
+  const fluDisease = await prisma.disease.create({
+    data: {
+      name: 'Flu',
+      description: 'Influenza is a viral infection that attacks your respiratory system',
+      solutions: 'Rest, hydration, and over-the-counter medications',
+    },
+  });
+
+  const coldDisease = await prisma.disease.create({
+    data: {
+      name: 'Common Cold',
+      description: 'A viral infection of the upper respiratory tract',
+      solutions: 'Rest, hydration, and over-the-counter cold remedies',
+    },
+  });
+
+  // Seed Disease Symptoms
+  await prisma.diseaseSymptom.create({
+    data: {
+      diseaseId: fluDisease.id,
+      symptomId: feverSymptom.id,
+      probability: 0.8,
+    },
+  });
+
+  await prisma.diseaseSymptom.create({
+    data: {
+      diseaseId: fluDisease.id,
+      symptomId: coughSymptom.id,
+      probability: 0.7,
+    },
+  });
+
+  await prisma.diseaseSymptom.create({
+    data: {
+      diseaseId: coldDisease.id,
+      symptomId: coughSymptom.id,
+      probability: 0.6,
+    },
+  });
+
+  // Seed Consultations
+  await prisma.consultation.create({
+    data: {
+      userId: regularUser.id,
+      userInput: { symptoms: ['Fever', 'Cough'] },
+      results: { possibleDiseases: ['Flu'], probability: 0.8 },
+      diseaseId: fluDisease.id,
+    },
+  });
+
+  console.log('Seeding completed successfully.');
 }
 
 main()
   .catch((e) => {
-    console.error('Error seeding data:', e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

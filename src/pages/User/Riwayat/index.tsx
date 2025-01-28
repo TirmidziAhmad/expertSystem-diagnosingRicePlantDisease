@@ -1,5 +1,5 @@
 import RiwayatLayout from '../../../components/layout/User/Riwayat';
-
+import ProtectedRoute from '@/middleware/protectedroute';
 const Riwayat = () => {
   return (
     <>
@@ -8,4 +8,4 @@ const Riwayat = () => {
   );
 };
 
-export default Riwayat;
+export default ProtectedRoute(Riwayat);

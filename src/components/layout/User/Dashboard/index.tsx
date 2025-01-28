@@ -15,9 +15,13 @@ const DashboardLayout: React.FC = () => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
-    setUsername(Cookies.get('username') || '');
+    if (Cookies.get('username') === undefined) {
+      setUsername('User');
+    } else {
+      setUsername(Cookies.get('username'));
+    }
   }, []);
-
+  const formattedUsername = username.charAt(0).toUpperCase() + username.slice(1);
   return (
     <>
       <div className='flex min-h-screen'>
@@ -25,7 +29,7 @@ const DashboardLayout: React.FC = () => {
         <main className='flex-1 p-6 sm:ml-[260px]'>
           <Navbar title='Overview Dashboard' />
           <section className='mt-4'>
-            <Hero title={'Hi, ' + username} subtitle='Selamat datang di Sistem Pakar Diagnosa Penyakit Pada Tanaman Padi' imageSrc='/image.svg' />
+            <Hero title={'Hi, ' + formattedUsername} subtitle='Selamat datang di Sistem Pakar Diagnosa Penyakit Pada Tanaman Padi' imageSrc='/image.svg' />
             <div className='flex flex-col sm:flex-row gap-4 mt-3'>
               <CardTotal />
               {/* <Chart /> */}

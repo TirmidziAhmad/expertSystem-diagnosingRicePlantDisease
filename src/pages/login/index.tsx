@@ -19,8 +19,9 @@ const LoginPage: React.FC = () => {
 
       if (response.status === 200) {
         const { token } = response.data;
-        const { username, role } = response.data.user;
+        const { username, role, userId } = response.data.user;
         Cookies.set('token', token, { expires: 1 / 24 });
+        Cookies.set('userId', userId);
         Cookies.set('username', username, { expires: 1 / 24 });
         Cookies.set('role', role, { expires: 1 / 24 });
         if (role === 'admin') {
