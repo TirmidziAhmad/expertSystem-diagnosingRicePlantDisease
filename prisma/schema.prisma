@@ -9,7 +9,7 @@ datasource db {
 
 model User {
   id       Int      @id @default(autoincrement())
-  username     String   @db.VarChar
+  username String   @db.VarChar
   email    String   @unique @db.VarChar
   password String   @db.VarChar
   roleId   Int
@@ -30,21 +30,20 @@ model Role {
 
 model Disease {
   id          Int             @id @default(autoincrement())
+  image       String
   name        String          @unique @db.VarChar
   description String          @db.Text
-  solutions   String?         @db.Text
   symptoms    DiseaseSymptom[]
   consultations Consultation[]
+  solutions   DiseaseSolution[] 
 
   @@map("diseases")
 }
 
 model Symptom {
   id          Int             @id @default(autoincrement())
-  code String  @unique @db.VarChar    
-  name        String          @unique @db.VarChar
-  image       String
-  description String          @db.Text
+  code        String          @unique @db.VarChar    
+  description       String          @unique @db.VarChar
   diseases    DiseaseSymptom[]
 
   @@map("symptoms")
@@ -55,8 +54,8 @@ model DiseaseSymptom {
   diseaseId   Int
   symptomId   Int
   probability Float
-  disease     Disease @relation(fields: [diseaseId], references: [id])
-  symptom     Symptom @relation(fields: [symptomId], references: [id])
+  disease     Disease  @relation(fields: [diseaseId], references: [id])
+  symptom     Symptom  @relation(fields: [symptomId], references: [id])
 
   @@unique([diseaseId, symptomId])
   @@map("disease_symptoms")
@@ -67,10 +66,29 @@ model Consultation {
   createdAt DateTime @default(now())
   userId    Int
   userInput Json
-  results   Json?
+  results   Json
   diseaseId Int?
   user      User     @relation(fields: [userId], references: [id])
   disease   Disease? @relation(fields: [diseaseId], references: [id])
 
   @@map("consultations")
+}
+
+model Solution {
+  id          Int             @id @default(autoincrement())
+  description        String          @unique @db.VarChar
+  diseases    DiseaseSolution[] 
+
+  @@map("solutions")
+}
+
+
+model DiseaseSolution {
+  diseaseId Int
+  solutionId Int
+  disease   Disease  @relation(fields: [diseaseId], references: [id])
+  solution  Solution @relation(fields: [solutionId], references: [id])
+
+  @@id([diseaseId, solutionId]) 
+  @@map("disease_solutions")
 }

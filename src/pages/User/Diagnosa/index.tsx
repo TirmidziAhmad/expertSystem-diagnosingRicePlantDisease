@@ -1,4 +1,6 @@
+'use client';
 import DiagnosaLayout from '../../../components/layout/User/Diagnosa';
+import ProtectedRoute from '@/middleware/protectedroute';
 
 const Diagnosa = () => {
   return (
@@ -8,4 +10,4 @@ const Diagnosa = () => {
   );
 };
 
-export default Diagnosa;
+export default ProtectedRoute(Diagnosa);

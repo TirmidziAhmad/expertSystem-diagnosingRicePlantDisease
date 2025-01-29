@@ -2,44 +2,57 @@
 
 import { Table } from '@chakra-ui/react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import axios from 'axios';
-const TableDiagnosa = () => {
-  const tableHeader = useMemo(() => ['No', 'Kode Gejala', 'Nama Gejala', 'Checkbox'], []);
-  const [data, setData] = useState<{ code: string; name: string }[]>([]);
 
+const TableDiagnosa = ({ selectedSymptomCodes }) => {
+  const tableHeader = useMemo(() => ['No', 'Kode Gejala', 'Nama Gejala', 'Checkbox'], []);
+  const [tableData, setTableData] = useState([]);
+  const [selectedCodes, setSelectedCodes] = useState([]);
+
+  const handleCheckboxChange = (code, isChecked) => {
+    const updatedCodes = isChecked
+      ? [...selectedCodes, code] // Add if checked
+      : selectedCodes.filter((c) => c !== code); // Remove if unchecked
+
+    setSelectedCodes(updatedCodes);
+    selectedSymptomCodes(updatedCodes); // Pass data to parent
+  };
+
+  //fetch tabledata
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchTableData = async () => {
       try {
         const response = await axios.get('/api/user/symptoms');
-        setData(response.data);
+        setTableData(response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching table data:', error);
       }
     };
-    fetchData();
+
+    fetchTableData();
   }, []);
 
   return (
     <>
-      <Table.Root className='mt-4  w-full border  rounded-lg' size='lg' striped stickyHeader>
-        <Table.Header className='bg-beige text-white rounded-md '>
-          <Table.Row className=''>
+      <Table.Root className='mt-4 w-full border rounded-lg' size='lg' striped stickyHeader>
+        <Table.Header className='bg-beige text-white rounded-md'>
+          <Table.Row>
             {tableHeader.map((item, index) => (
-              <Table.ColumnHeader key={index} className='bg-beige text-white '>
+              <Table.ColumnHeader key={index} className='bg-beige text-white'>
                 {item}
               </Table.ColumnHeader>
             ))}
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {data.map((item, index) => (
-            <Table.Row key={index} className=''>
-              <Table.Cell className=''>{index + 1}</Table.Cell>
-              <Table.Cell className=''>{item.code}</Table.Cell>
-              <Table.Cell className=''>{item.name}</Table.Cell>
-              <Table.Cell className=''>
-                <Checkbox variant='subtle' />
+          {tableData.map((item, index) => (
+            <Table.Row key={index}>
+              <Table.Cell>{index + 1}</Table.Cell>
+              <Table.Cell>{item.code}</Table.Cell>
+              <Table.Cell>{item.description}</Table.Cell>
+              <Table.Cell>
+                <Checkbox variant='subtle' onCheckedChange={(checked) => handleCheckboxChange(item.code, checked)} />
               </Table.Cell>
             </Table.Row>
           ))}

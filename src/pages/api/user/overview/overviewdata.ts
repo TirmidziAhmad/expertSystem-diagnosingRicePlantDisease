@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Count the number of diseases, symptoms, and knowledge entries
       const diseaseCount = await prisma.disease.count();
       const symptomCount = await prisma.symptom.count();
-      const pengetahuanCount = await prisma.diseaseSymptom.count();
+      const pengetahuanCount = await prisma.diseaseSolution.count();
 
       res.status(200).json({
         diseases: diseaseCount,
