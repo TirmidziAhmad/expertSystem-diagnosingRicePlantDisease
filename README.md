@@ -73,3 +73,8 @@ npm run dev
 ```
 
 Aplikasi Next.js Anda sekarang harus berjalan di `http://localhost:3000`.
+
+## 5. Login dummy data yang sudah tersedia
+
+email : user@mail.com
+password: password123
