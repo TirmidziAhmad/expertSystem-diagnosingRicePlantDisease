@@ -1,40 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Panduan Setup Next.js + TypeScript + Prisma + PostgreSQL
 
-## Getting Started
+Panduan ini berisi instruksi untuk mengatur proyek setelah mengkloning repositori.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prequisite
+
+Sebelum memulai, pastikan telah menginstal:
+
+- **Node.js** (Versi LTS terbaru) - [Unduh di sini](https://nodejs.org/)
+- **PostgreSQL** (Terinstal dan berjalan) - [Unduh di sini](https://www.postgresql.org/download/)
+
+---
+
+## 1. Clone Repositori
+
+Jalankan perintah berikut:
+
+```sh
+git https://github.com/TirmidziAhmad/expertSystem-diagnosingRicePlantDisease.git
+cd your-repository
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 2. Instal Dependensi
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Jalankan perintah berikut untuk menginstal paket yang diperlukan:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```sh
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 3. Konfigurasi Variabel Lingkungan
 
-To learn more about Next.js, take a look at the following resources:
+Buat file `.env` dan perbarui variabel `DATABASE_URL` dengan string koneksi PostgreSQL Anda:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/mydatabase"
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ganti `USER`, `PASSWORD`, dan `mydatabase` dengan kredensial PostgreSQL Anda.
 
-## Deploy on Vercel
+```env
+JWT_SECRET=very_secure
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Ganti `very_secure` dengan string rahasia Anda.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+---
+
+## 4. Setup Prisma
+
+Jalankan perintah berikut untuk menerapkan migrasi database dan menghasilkan klien Prisma:
+
+```sh
+npx prisma generate
+npx prisma db push
+npm run seed
+```
+
+---
+
+## 5. Jalankan Server Pengembangan
+
+Jalankan server pengembangan Next.js:
+
+```sh
+npm run dev
+```
+
+Aplikasi Next.js Anda sekarang harus berjalan di `http://localhost:3000`.
