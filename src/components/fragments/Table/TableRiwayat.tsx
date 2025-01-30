@@ -6,11 +6,17 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import parseFloatToPercentage from '@/lib/parseFloatToPercentage';
 import parseDate from '@/lib/parseDate';
-import { DialogActionTrigger, DialogBody, DialogCloseTrigger, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DialogBody, DialogCloseTrigger, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
+interface dataProps {
+  id: number;
+  results: string | number;
+  createdAt: string;
+}
 const TableRiwayat = () => {
   const tableHeader = useMemo(() => ['No', 'Penyakit', 'Tanggal', 'Nilai Presentase', 'Action'], []);
   const userId = Cookies.get('userId');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<dataProps[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,10 +34,10 @@ const TableRiwayat = () => {
     <>
       <DialogRoot placement={'center'}>
         <Table.Root striped interactive size='lg' className='mt-4 border'>
-          <Table.Header className='bg-beige text-white items-center text-center'>
+          <Table.Header className='  items-center text-center'>
             <Table.Row>
               {tableHeader.map((item, index) => (
-                <Table.ColumnHeader key={index} className='bg-beige text-white'>
+                <Table.ColumnHeader key={index} className='bg-[#A38A41] text-white '>
                   {item}
                 </Table.ColumnHeader>
               ))}
@@ -50,7 +56,7 @@ const TableRiwayat = () => {
                   <Table.Cell>{parseFloatToPercentage(firstValue)}</Table.Cell>
                   <Table.Cell>
                     <DialogTrigger asChild>
-                      <Button className='bg-olive text-white p-3'>Detail</Button>
+                      <Button className='bg-[#352802] text-white px-3 font-semibold'>Detail</Button>
                     </DialogTrigger>
                   </Table.Cell>
                 </Table.Row>
