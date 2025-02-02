@@ -36,19 +36,23 @@ npm install
 
 ## 3. Konfigurasi Variabel Lingkungan
 
-Buat file `.env` dan perbarui variabel `DATABASE_URL` dengan string koneksi PostgreSQL Anda:
+Buat database pada pgAdmin dengan nama mudah dimengerti, seperti `expert-system`.
+
+Buat file `.env` pada vsCode dan perbarui variabel `DATABASE_URL` dengan string koneksi PostgreSQL Anda:
 
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/mydatabase"
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/expert-system"
 ```
 
-Ganti `USER`, `PASSWORD`, dan `mydatabase` dengan kredensial PostgreSQL Anda.
+sesuaikan `USER`, `PASSWORD`, dan `expert-system` dengan kredensial PostgreSQL dengan project anda Anda.
+
+tambahkan juga
 
 ```env
 JWT_SECRET=very_secure
 ```
 
-Ganti `very_secure` dengan string rahasia Anda.
+(Optional)Ganti `very_secure` dengan string rahasia Anda.
 
 ---
 
@@ -74,7 +78,9 @@ npm run dev
 
 Aplikasi Next.js Anda sekarang harus berjalan di `http://localhost:3000`.
 
-## 5. Login dummy data yang sudah tersedia
+## 6. Login dummy data yang sudah tersedia
 
+```sh
 email : user@mail.com
 password: password123
+```
