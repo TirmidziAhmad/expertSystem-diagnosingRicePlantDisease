@@ -44,7 +44,8 @@ Buat file `.env` pada vsCode dan perbarui variabel `DATABASE_URL` dengan string 
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/expert-system"
 ```
 
-sesuaikan `USER`, `PASSWORD`, dan `expert-system` dengan kredensial PostgreSQL dengan project anda Anda.
+sesuaikan `USER`, `PASSWORD`, dengan kredensial PostgreSQL Anda.
+dan `expert-system`, dengan nama database yang anda buat.
 
 tambahkan juga
 
