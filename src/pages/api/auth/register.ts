@@ -1,19 +1,19 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import bcrypt from 'bcrypt';
-import prisma from '../../../lib/prisma'; // Assuming you've set up Prisma client in lib/prisma.ts
-import { z } from 'zod';
+import { NextApiRequest, NextApiResponse } from "next";
+import bcrypt from "bcrypt";
+import prisma from "../../../lib/prisma"; // Assuming you've set up Prisma client in lib/prisma.ts
+import { z } from "zod";
 
 // Zod schema for validation
 const registrationSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  username: z.string().min(4, { message: 'Username must be at least 4 characters long' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
+  email: z.string().email({ message: "Email tidak valid" }),
+  username: z.string().min(4, { message: "Username harus terdiri dari 4 karakter" }),
+  password: z.string().min(8, { message: "Password harus terdiri dari 8 karakter" }),
 });
 
 type RegistrationInput = z.infer<typeof registrationSchema>;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     try {
       // Validate input with Zod schema
       const body: RegistrationInput = registrationSchema.parse(req.body);
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where: { email },
       });
       if (existingUser) {
-        return res.status(400).json({ message: 'Email already exists' });
+        return res.status(400).json({ message: "Email already exists" });
       }
 
       // Hash the password before saving
@@ -42,17 +42,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Send response
-      return res.status(201).json({ message: 'User created successfully', user: newUser });
+      return res.status(201).json({ message: "User created successfully", user: newUser });
     } catch (error) {
       // Handle Zod validation errors
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Validation error', errors: error.errors });
+        return res.status(400).json({ message: "Validation error", errors: error.errors });
       }
 
       // Handle other errors
-      return res.status(500).json({ message: 'Internal server error', error: error });
+      return res.status(500).json({ message: "Internal server error", error: error });
     }
   } else {
-    return res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ message: "Method Not Allowed" });
   }
 }

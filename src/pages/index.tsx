@@ -1,6 +1,5 @@
-import React from 'react';
-import Dashboard from './user/dashboard';
-import ProtectedRoute from '@/middleware/protectedroute';
+import Dashboard from "./user/dashboard";
+import ProtectedRoute from "@/middleware/protectedroute";
 
 function index() {
   return (

@@ -1,9 +1,7 @@
-"use client";
-
-import React from "react";
 import CardMenu from "../../../fragments/CardMenu";
 import Navbar from "../../../fragments/Navbar";
 import Footer from "../../../fragments/Footer";
+import Image from "next/image";
 
 const TentangLayout = () => {
   return (
@@ -13,7 +11,7 @@ const TentangLayout = () => {
         <main className="flex-1 p-6 sm:ml-[260px]">
           <Navbar title="Tentang Sistem" />
           <div className="mt-20 flex flex-row justify-center items-center ">
-            <img className="w-30 h-20" src="/logo.svg" alt="Logo" />
+            <Image width={80} height={80} src="/logo.svg" alt="Logo" />
             <h1 className="text-6xl font-bold text-olive mt-4">ESRDP</h1>
           </div>
           <div className=" mt-10 flex flex-col justify-center items-start ">

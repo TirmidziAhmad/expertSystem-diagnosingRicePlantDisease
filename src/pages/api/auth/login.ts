@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import prisma from '@/lib/prisma';
+import type { NextApiRequest, NextApiResponse } from "next";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import prisma from "@/lib/prisma";
 
 interface LoginRequest {
   email: string;
@@ -9,8 +9,8 @@ interface LoginRequest {
 }
 
 const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
   const { email, password }: LoginRequest = req.body;
@@ -23,17 +23,17 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Email atau password tidak valid" });
     }
 
     // Check the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Email atau password tidak valid" });
     }
 
     if (!process.env.JWT_SECRET) {
-      throw new Error('JWT_SECRET is not set in the environment variables.');
+      throw new Error("JWT_SECRET is not set in the environment variables.");
     }
 
     const token = jwt.sign(
@@ -44,11 +44,11 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         roleName: user.role.name, // Include role name in the token if needed
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
     return res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
       user: {
         userId: user.id,
@@ -58,8 +58,8 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Login error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
