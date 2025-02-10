@@ -13,6 +13,8 @@ interface DataItem {
   name: string;
   image: string;
   description: string;
+  symptoms: string[];
+  solutions: string[];
 }
 
 const PengetahuanLayout = () => {
@@ -41,7 +43,7 @@ const PengetahuanLayout = () => {
           </section>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
             {data.map((item) => (
-              <CardPengetahuan key={item.id} title={item.name} description={item.description} />
+              <CardPengetahuan key={item.id} title={item.name} description={item.description} image={item.image} symptoms={item.symptoms} solutions={item.solutions} />
             ))}
           </div>
           <Footer />

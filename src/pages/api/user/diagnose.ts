@@ -16,7 +16,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Step 1: Fetch symptoms and related diseases
     const symptomsData = await prisma.symptom.findMany({
       where: { code: { in: symptoms } },
       include: { diseases: { include: { disease: true } } },
@@ -26,9 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: "No matching symptoms found" });
     }
 
-    // Step 2: Assign belief masses (m values)
     const beliefMasses = new Map<string, number>();
-
     symptomsData.forEach((symptom) => {
       symptom.diseases.forEach((ds) => {
         const diseaseName = ds.disease.name;
@@ -37,7 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     });
 
-    // Normalize belief masses
     const totalMass = Array.from(beliefMasses.values()).reduce((sum, m) => sum + m, 0);
     if (totalMass > 0) {
       beliefMasses.forEach((mass, disease) => {
@@ -45,7 +41,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Step 3: Apply Dempster’s Rule of Combination
     function combineMasses(m1: Map<string, number>, m2: Map<string, number>): Map<string, number> {
       const combinedMasses = new Map<string, number>();
       let conflict = 0;
@@ -56,12 +51,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const newMass = m1Value * m2Value;
             combinedMasses.set(d1, (combinedMasses.get(d1) || 0) + newMass);
           } else {
-            conflict += m1Value * m2Value; // Conflict mass (K factor)
+            conflict += m1Value * m2Value;
           }
         });
       });
 
-      // Normalize masses to account for conflict
       if (conflict < 1) {
         combinedMasses.forEach((mass, disease) => {
           combinedMasses.set(disease, mass / (1 - conflict));
@@ -71,28 +65,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return combinedMasses;
     }
 
-    // Apply DST combination on symptoms
     let combinedMass = new Map(beliefMasses);
     symptomsData.forEach(() => {
       combinedMass = combineMasses(combinedMass, beliefMasses);
     });
 
-    // Step 4: Compute belief and plausibility
     const belief = new Map<string, number>();
-    const plausibility = new Map<string, number>();
-
     combinedMass.forEach((mass, disease) => {
       belief.set(disease, mass);
-      let plausibilitySum = mass;
-      combinedMass.forEach((otherMass, otherDisease) => {
-        if (disease !== otherDisease) {
-          plausibilitySum += otherMass;
-        }
-      });
-      plausibility.set(disease, plausibilitySum);
     });
 
-    // Step 5: Find the most likely disease based on belief
     let mostLikelyDisease: string | null = null;
     let highestBelief = 0;
 
@@ -103,12 +85,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     });
 
-    // Fetch the most likely disease ID
     const mostLikelyDiseaseRecord = mostLikelyDisease ? await prisma.disease.findUnique({ where: { name: mostLikelyDisease } }) : null;
     const mostLikelyDiseaseId = mostLikelyDiseaseRecord?.id ?? undefined;
 
-    // Step 6: Store the consultation in the database
-    const consultation = await prisma.consultation.create({
+    await prisma.consultation.create({
       data: {
         userId,
         userInput: symptoms,
@@ -117,11 +97,63 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    res.status(200).json({
-      mostLikelyDisease,
-      highestBelief,
-      beliefValues: Object.fromEntries(belief),
-      plausibilityValues: Object.fromEntries(plausibility),
+    const latestConsultation = await prisma.consultation.findFirst({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        disease: {
+          select: {
+            name: true,
+            image: true,
+            solutions: {
+              select: {
+                solution: {
+                  select: { description: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!latestConsultation) {
+      return res.status(200).json({
+        success: true,
+        data: null,
+        message: "No consultations found for this user",
+      });
+    }
+
+    const results = latestConsultation.results;
+    let highestDisease = "Unknown";
+    let highestValue = 0;
+    let highestImage = "";
+    const otherDiseases = [];
+
+    for (const [disease, value] of Object.entries(results)) {
+      if (value > highestValue) {
+        if (highestDisease !== "Unknown") {
+          otherDiseases.push({ name: highestDisease, value: highestValue });
+        }
+        highestDisease = disease;
+        highestValue = value;
+        highestImage = latestConsultation.disease?.image || "";
+      } else {
+        otherDiseases.push({ name: disease, value });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        id: latestConsultation.id,
+        createdAt: latestConsultation.createdAt,
+        disease: { name: highestDisease, value: highestValue, image: highestImage },
+        otherDiseases,
+        solutions: latestConsultation.disease?.solutions.map((s) => s.solution.description) || [],
+        userInput: latestConsultation.userInput,
+      },
     });
   } catch (error) {
     console.error("Error in disease diagnosis:", error);

@@ -5,15 +5,16 @@ interface CardPengetahuanProps {
   title: string;
   description: string;
   image: string;
-  onClick: () => void;
+  symptoms: string[];
+  solutions: string[];
 }
 
-const CardPengetahuan: React.FC<CardPengetahuanProps> = ({ title, description, image }) => {
+const CardPengetahuan: React.FC<CardPengetahuanProps> = ({ title, description, image, symptoms, solutions }) => {
   return (
     <>
-      <DialogRoot>
+      <DialogRoot size={"lg"} placement={"center"}>
         <div className="rounded-lg border-2 p-4">
-          <Image src={image} alt={title} className="rounded-lg mb-4" width={300} height={300} />
+          <Image src={image} alt={title} className="rounded-lg mb-4" width={700} height={700} />
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
           <p className="text-gray-600 mb-4 truncate">{description}</p>
           <DialogTrigger>
@@ -22,11 +23,26 @@ const CardPengetahuan: React.FC<CardPengetahuanProps> = ({ title, description, i
         </div>
         <DialogContent className="bg-[#FFFDF9] text-[#352802]">
           <DialogHeader>
-            <DialogTitle className="font-bold">Detail Riwayat Konsultasi</DialogTitle>
+            <DialogTitle className="font-bold">{title}</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            <p></p>
+            <div className="flex justify-center items-center">
+              <Image src={image} alt={title} className="rounded-lg mb-4" width={400} height={400} />
+            </div>
+            <p className="indent-[5%]">{description}</p> <br />
+            <h1 className="font-bold">Gejala:</h1>
+            <ul className="list-disc pl-5">
+              {symptoms.map((symptom, index) => (
+                <li key={index}>{symptom}</li>
+              ))}
+            </ul>
+            <br />
+            <h1 className="font-bold">Solusi:</h1>
+            <ul className="list-disc pl-5">
+              {solutions.map((solution, index) => (
+                <li key={index}>{solution}</li>
+              ))}
+            </ul>
           </DialogBody>
           <DialogFooter></DialogFooter>
           <DialogCloseTrigger />

@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Cookies from "js-cookie";
 //add module to push user to login after logout
 import { useRouter } from "next/navigation";

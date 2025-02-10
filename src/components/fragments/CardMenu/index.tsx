@@ -1,5 +1,4 @@
 "use client";
-import React from "react";
 import Link from "next/link";
 import { FaHome, FaHistory, FaSearch, FaBook, FaInfoCircle } from "react-icons/fa";
 import useActiveMenu from "./UseActiveMenu";
