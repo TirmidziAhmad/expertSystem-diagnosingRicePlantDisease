@@ -1,5 +1,5 @@
-import PengetahuanLayout from '../../../components/layout/User/Pengetahuan';
-
+import PengetahuanLayout from "../../../components/layout/User/Pengetahuan";
+import protectedRoute from "@/middleware/protectedRoute";
 const Pengetahuan = () => {
   return (
     <>
@@ -8,4 +8,4 @@ const Pengetahuan = () => {
   );
 };
 
-export default Pengetahuan;
+export default protectedRoute(Pengetahuan, ["user"]);

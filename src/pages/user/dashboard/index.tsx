@@ -1,5 +1,5 @@
 import DashboardLayout from "../../../components/layout/User/Dashboard";
-import ProtectedRoute from "@/middleware/protectedroute";
+import protectedRoute from "@/middleware/protectedRoute";
 
 const Dashboard = () => {
   return (
@@ -9,4 +9,4 @@ const Dashboard = () => {
   );
 };
 
-export default ProtectedRoute(Dashboard);
+export default protectedRoute(Dashboard, ["user"]);

@@ -1,36 +1,52 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { FC } from "react";
 
-type ProtectedRouteProps = {
-  [key: string]: any;
-};
-
-const ProtectedRoute = (WrappedComponent: FC<ProtectedRouteProps>) => {
-  const RequiresAuth: FC<ProtectedRouteProps> = (props) => {
+const protectedRoute = (WrappedComponent: React.ComponentType, allowedRoles: string[]) => {
+  const Wrapper = (props: any) => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
     useEffect(() => {
-      const token = Cookies.get("token");
+      const checkAuth = () => {
+        const role = Cookies.get("role");
+        const userId = Cookies.get("userId");
 
-      if (!token) {
-        // If no token is found, redirect to the login page
-        router.push("/login");
+        if (!role || !userId) {
+          console.log("Missing authentication credentials");
+          router.push("/login");
+          return;
+        }
+
+        if (!allowedRoles.includes(role)) {
+          console.log(`User role ${role} not authorized for this route`);
+          router.push("/unauthorized");
+          return;
+        }
+
+        setIsAuthorized(true);
+        setIsLoading(false);
+      };
+
+      if (router.isReady) {
+        checkAuth();
       }
-    }, [router]);
+    }, [router, router.isReady]);
 
-    // Render nothing if the token is not validated yet
-    const token = Cookies.get("token");
-    if (!token) return null;
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      );
+    }
 
-    // Render the wrapped component if the user is authenticated
-    return <WrappedComponent {...props} />;
+    return isAuthorized ? <WrappedComponent {...props} /> : null;
   };
 
-  return RequiresAuth;
+  return Wrapper;
 };
 
-export default ProtectedRoute;
+export default protectedRoute;

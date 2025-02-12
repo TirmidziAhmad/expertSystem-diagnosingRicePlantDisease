@@ -1,5 +1,5 @@
+import protectedRoute from "@/middleware/protectedRoute";
 import DiagnosaLayout from "../../../components/layout/User/Diagnosa";
-import ProtectedRoute from "@/middleware/protectedroute";
 
 const Diagnosa = () => {
   return (
@@ -9,4 +9,4 @@ const Diagnosa = () => {
   );
 };
 
-export default ProtectedRoute(Diagnosa);
+export default protectedRoute(Diagnosa, ["user"]);

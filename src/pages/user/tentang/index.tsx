@@ -1,5 +1,5 @@
 import TentangLayout from "../../../components/layout/User/Tentang";
-
+import protectedRoute from "@/middleware/protectedRoute";
 const Tentang = () => {
   return (
     <>
@@ -8,4 +8,4 @@ const Tentang = () => {
   );
 };
 
-export default Tentang;
+export default protectedRoute(Tentang, ["user"]);

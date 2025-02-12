@@ -1,5 +1,4 @@
 import Dashboard from "./user/dashboard";
-import ProtectedRoute from "@/middleware/protectedroute";
 
 function index() {
   return (
@@ -9,4 +8,4 @@ function index() {
   );
 }
 
-export default ProtectedRoute(index);
+export default index;

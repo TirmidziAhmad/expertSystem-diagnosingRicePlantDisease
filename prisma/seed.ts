@@ -16,7 +16,7 @@ async function main() {
 
   // Create roles
   await prisma.role.createMany({
-    data: [{ name: "Admin" }, { name: "User " }],
+    data: [{ name: "admin" }, { name: "user" }],
   });
 
   const hashedPassword = await bcrypt.hash("password123", 10);
@@ -45,63 +45,63 @@ async function main() {
         name: "Penyakit Blas Daun",
         description:
           "Penyakit blas yang disebabkan oleh jamur Magnaporthe oryzae adalah salah satu penyakit paling destruktif pada tanaman padi di dunia. Infeksi biasanya dimulai dengan bercak berbentuk belah ketupat pada daun, yang kemudian berkembang menjadi luka necrotic besar. Jika menyerang batang atau leher malai, penyakit ini dapat menyebabkan malai tidak menghasilkan bulir padi yang sempurna. Penyakit ini berkembang pesat di lingkungan dengan suhu yang fluktuatif, kelembapan tinggi, dan sirkulasi udara yang buruk. Dampaknya sangat signifikan",
-        image: "penyakit_blas_daun.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Blas Leher",
         description:
           "Penyakit blas yang disebabkan oleh jamur Magnaporthe oryzae adalah salah satu penyakit paling destruktif pada tanaman padi di dunia. Infeksi biasanya dimulai dengan bercak berbentuk belah ketupat pada daun, yang kemudian berkembang menjadi luka necrotic besar. Jika menyerang batang atau leher malai, penyakit ini dapat menyebabkan malai tidak menghasilkan bulir padi yang sempurna. Penyakit ini berkembang pesat di lingkungan dengan suhu yang fluktuatif, kelembapan tinggi, dan sirkulasi udara yang buruk. Dampaknya sangat signifikan",
-        image: "penyakit_blas_leher.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Bercak Semit",
         description: "A bacterial disease causing wilting and yellowing of leaves.",
-        image: "penyakit_bercak_semit.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Hawar Pelepah",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_hawar_pelepah.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Busuk Pelepah",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_busuk_pelepah.jpg",
+        image: "/bg.png",
       },
       {
         name: "Hawar Daun Bakteri",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "hawar_daun_bakteri.jpg",
+        image: "/bg.png",
       },
       {
         name: "Bacterial Red Stripe",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "bacterial_red_stripe.jpg",
+        image: "/bg.png",
       },
       {
         name: "Bacterial Leaf Streak",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "bacterial_leaf_streak.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Kerdil Hampa",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_kerdil_hampa.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Kerdil Rumput Tipe 1",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_kerdil_rumput_tipe_1.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Kerdil Rumput Tipe 2",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_kerdil_rumput_tipe_2.jpg",
+        image: "/bg.png",
       },
       {
         name: "Penyakit Kerdil Tungro",
         description: "A fungal disease causing brown spots on leaves.",
-        image: "penyakit_kerdil_tungro.jpg",
+        image: "/bg.png",
       },
     ],
   });

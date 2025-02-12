@@ -1,5 +1,5 @@
-import HasilDiagnosaa from '../../../components/layout/User/HasilDiagnosaa';
-
+import HasilDiagnosaa from "../../../components/layout/User/HasilDiagnosaa";
+import protectedRoute from "@/middleware/protectedRoute";
 const HasilDiagnosa = () => {
   return (
     <>
@@ -8,4 +8,4 @@ const HasilDiagnosa = () => {
   );
 };
 
-export default HasilDiagnosa;
+export default protectedRoute(HasilDiagnosa, ["user"]);

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Cookies from "cookies";
 import prisma from "@/lib/prisma";
 
 interface LoginRequest {
@@ -16,17 +17,15 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, password }: LoginRequest = req.body;
 
   try {
-    // Find user by email and include role name
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { role: true }, // Include related role table
+      include: { role: true },
     });
 
     if (!user) {
       return res.status(401).json({ message: "Email atau password tidak valid" });
     }
 
-    // Check the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Email atau password tidak valid" });
@@ -41,20 +40,35 @@ const loginHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         userId: user.id,
         email: user.email,
         roleId: user.roleId,
-        roleName: user.role.name, // Include role name in the token if needed
+        roleName: user.role.name,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    // Store JWT in secure HTTP-only cookie
+    const cookies = new Cookies(req, res);
+    cookies.set("token", token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
+    cookies.set("role", user.role.name, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         userId: user.id,
         email: user.email,
         username: user.username,
-        role: user.role.name, // Return role name
+        role: user.role.name,
       },
     });
   } catch (error) {
