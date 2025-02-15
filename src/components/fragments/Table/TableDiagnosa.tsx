@@ -1,32 +1,31 @@
-'use client';
+"use client";
 
-import { Table } from '@chakra-ui/react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { useState, useMemo, useEffect } from 'react';
-import axios from 'axios';
+import { Table } from "@chakra-ui/react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 
 const TableDiagnosa = ({ selectedSymptomCodes }) => {
-  const tableHeader = useMemo(() => ['No', 'Kode Gejala', 'Nama Gejala', 'Checkbox'], []);
+  const tableHeader = useMemo(() => ["No", "Kode Gejala", "Nama Gejala", "Checkbox"], []);
   const [tableData, setTableData] = useState([]);
   const [selectedCodes, setSelectedCodes] = useState([]);
 
   const handleCheckboxChange = (code, isChecked) => {
     const updatedCodes = isChecked
-      ? [...selectedCodes, code] // Add if checked
+      ? [...new Set([...selectedCodes, code])] // Use Set to ensure uniqueness when adding
       : selectedCodes.filter((c) => c !== code); // Remove if unchecked
 
     setSelectedCodes(updatedCodes);
     selectedSymptomCodes(updatedCodes); // Pass data to parent
   };
 
-  //fetch tabledata
   useEffect(() => {
     const fetchTableData = async () => {
       try {
-        const response = await axios.get('/api/user/symptoms');
+        const response = await axios.get("/api/user/symptoms");
         setTableData(response.data);
       } catch (error) {
-        console.error('Error fetching table data:', error);
+        console.error("Error fetching table data:", error);
       }
     };
 
@@ -35,11 +34,11 @@ const TableDiagnosa = ({ selectedSymptomCodes }) => {
 
   return (
     <>
-      <Table.Root className='mt-4 w-full border rounded-lg' size='lg' striped stickyHeader>
-        <Table.Header className='bg-beige text-white rounded-md'>
+      <Table.Root className="mt-4 w-full border rounded-lg" size="lg" striped stickyHeader>
+        <Table.Header className="bg-beige text-white rounded-md">
           <Table.Row>
             {tableHeader.map((item, index) => (
-              <Table.ColumnHeader key={index} className='bg-beige text-white'>
+              <Table.ColumnHeader key={index} className="bg-beige text-white">
                 {item}
               </Table.ColumnHeader>
             ))}
@@ -52,7 +51,7 @@ const TableDiagnosa = ({ selectedSymptomCodes }) => {
               <Table.Cell>{item.code}</Table.Cell>
               <Table.Cell>{item.description}</Table.Cell>
               <Table.Cell>
-                <Checkbox variant='subtle' onCheckedChange={(checked) => handleCheckboxChange(item.code, checked)} />
+                <Checkbox variant="subtle" checked={selectedCodes.includes(item.code)} onCheckedChange={(checked) => handleCheckboxChange(item.code, checked)} />
               </Table.Cell>
             </Table.Row>
           ))}

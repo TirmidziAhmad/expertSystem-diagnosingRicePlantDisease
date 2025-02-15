@@ -54,7 +54,7 @@ async function main() {
         image: "/bg.png",
       },
       {
-        name: "Penyakit Bercak Semit",
+        name: "Penyakit Bercak Sempit",
         description: "A bacterial disease causing wilting and yellowing of leaves.",
         image: "/bg.png",
       },
