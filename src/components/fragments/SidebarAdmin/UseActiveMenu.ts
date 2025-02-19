@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 type MenuItem = {
   name: string;
@@ -8,7 +9,7 @@ type MenuItem = {
 };
 
 const useActiveMenu = (menuItems: MenuItem[]) => {
-  const [activeMenu, setActiveMenu] = useState<string>('Dashboard');
+  const [activeMenu, setActiveMenu] = useState<string>("Dashboard");
   const router = useRouter();
 
   useEffect(() => {

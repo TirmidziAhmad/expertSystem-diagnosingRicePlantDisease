@@ -1,3 +1,4 @@
+"use client";
 import { HStack } from "@chakra-ui/react";
 import { InputGroup } from "@/components/ui/input-group";
 import { IconType } from "react-icons";

@@ -1,103 +1,125 @@
 "use client";
 
-import { Table } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { FaPenSquare } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
+import { useState, useEffect, useCallback } from "react";
+import { Table, Input, Button } from "@chakra-ui/react";
+import { FaPenSquare, FaTrash } from "react-icons/fa";
 import ButtonElement from "../../elements/ButtonElement";
+import axios from "axios";
+import { DialogBody, DialogCloseTrigger, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-interface TableGejalaProps {
+interface TableRelasiProps {
   searchQuery: string;
+  refreshTable: boolean;
+  setRefreshTable: (value: boolean) => void;
 }
 
-const TableRelasi: React.FC<TableGejalaProps> = ({ searchQuery }) => {
-  const [selection, setSelection] = useState<string[]>([]);
+interface Solution {
+  id: number;
+  description: string;
+}
 
-  const filteredItems = items.filter(
-    (item) =>
-      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.namapenyakit.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, setRefreshTable }) => {
+  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [editDescription, setEditDescription] = useState("");
+  const [editId, setEditId] = useState<number | null>(null);
 
-  const rows = filteredItems.map((item) => (
-    <Table.Row
-      key={item.id}
-      data-selected={selection.includes(item.id) ? "" : undefined}
-      className="border-b border-gray-300 hover:bg-gray-100 transition-all"
-    >
-      <Table.Cell className="py-2 px-4">
-        <Checkbox
-          aria-label="Select row"
-          checked={selection.includes(item.id)}
-          onCheckedChange={(changes) => {
-            setSelection((prev) =>
-              changes.checked
-                ? [...prev, item.id]
-                : selection.filter((name) => name !== item.id)
-            );
-          }}
-        />
-      </Table.Cell>
-      <Table.Cell className="py-2 px-4">{item.id}</Table.Cell>
-      <Table.Cell className="py-2 px-4">{item.namapenyakit}</Table.Cell>
-      <Table.Cell className="py-2 px-4">{item.namagejala}</Table.Cell>
-      <Table.Cell className="py-2 px-4">{item.bobot}</Table.Cell>
-      <Table.Cell className="py-2 px-4">
-        <div className="flex flex-row gap-2">
-          <ButtonElement
-            bg="bg-brick"
-            label="Edit"
-            icon={FaPenSquare}
-            variant="outline"
-            colorScheme="teal"
-          />
-          <ButtonElement
-            bg="bg-gold"
-            label="Hapus"
-            icon={FaTrash}
-            variant="outline"
-            colorScheme="teal"
-          />
-        </div>
-      </Table.Cell>
-    </Table.Row>
-  ));
+  // Memoize the fetch function to prevent unnecessary re-renders
+  const fetchSolutions = useCallback(() => {
+    axios
+      .get("/api/admin/solution")
+      .then((res) => setSolutions(res.data))
+      .catch((err) => console.error("Error fetching solutions:", err));
+  }, []);
+
+  useEffect(() => {
+    fetchSolutions();
+  }, [refreshTable, fetchSolutions]);
+
+  // Memoize the filtered items
+  const filteredItems = searchQuery ? solutions.filter((item) => item.id.toString().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase())) : solutions;
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete("/api/admin/solution", { data: { id } });
+      setSolutions((prevSolutions) => prevSolutions.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error deleting solution:", error);
+    }
+  };
+
+  const handleEdit = (id: number, description: string) => {
+    setEditId(id);
+    setEditDescription(description);
+  };
+
+  const handleUpdateSolution = async () => {
+    if (!editId || !editDescription.trim()) {
+      return alert("Description cannot be empty!");
+    }
+
+    try {
+      await axios.put("/api/admin/solution", { id: editId, description: editDescription });
+      setEditId(null);
+      setEditDescription("");
+      setRefreshTable(!refreshTable);
+      document.getElementById("close-edit-dialog")?.click();
+    } catch (error) {
+      console.error("Error updating solution:", error);
+    }
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditDescription(e.target.value);
+  };
 
   return (
     <>
-      <Table.Root className="mt-4 border border-gray-300 item-center text-center">
+      <Table.Root className="mt-4 border border-gray-300" size={"lg"}>
         <Table.Header className="bg-beige text-white">
           <Table.Row>
-            <Table.ColumnHeader />
-            <Table.ColumnHeader className="py-2 px-4 text-center">
-              ID
-            </Table.ColumnHeader>
-            <Table.ColumnHeader className="py-2 px-24 text-center">
-              Nama Penyakit
-            </Table.ColumnHeader>
-            <Table.ColumnHeader className="py-2 px-24 text-center">
-              Nama Gejala
-            </Table.ColumnHeader>
-            <Table.ColumnHeader className="py-2 px-10 text-center">
-              Bobot
-            </Table.ColumnHeader>
-            <Table.ColumnHeader className="py-2 px-20 text-center">
-              Action
-            </Table.ColumnHeader>
+            <Table.ColumnHeader>No</Table.ColumnHeader>
+            <Table.ColumnHeader>Nama Solusi</Table.ColumnHeader>
+            <Table.ColumnHeader>Aksi</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
-        <Table.Body>{rows}</Table.Body>
+        <Table.Body>
+          {filteredItems.map((item, index) => (
+            <Table.Row key={item.id} className="border-b border-gray-300 hover:bg-gray-100">
+              <Table.Cell>{index + 1}</Table.Cell>
+              <Table.Cell>{item.description}</Table.Cell>
+              <Table.Cell>
+                <div className="flex flex-row gap-2">
+                  {/* Edit Button */}
+                  <DialogRoot placement={"center"}>
+                    <DialogTrigger asChild>
+                      <ButtonElement bg="bg-gold" label="Edit" icon={FaPenSquare} variant="outline" colorScheme="teal" onClick={() => handleEdit(item.id, item.description)} />
+                    </DialogTrigger>
+                    <DialogContent className="bg-white text-black">
+                      <DialogCloseTrigger id="close-edit-dialog" />
+                      <DialogHeader>
+                        <DialogTitle className="font-semibold">Edit Solusi</DialogTitle>
+                      </DialogHeader>
+                      <DialogBody>
+                        <Input className="px-2 border" value={editDescription} onChange={handleEditInputChange} placeholder="Masukkan nama solusi" />
+                      </DialogBody>
+                      <DialogFooter>
+                        <Button onClick={handleUpdateSolution} className="bg-teal-500 text-white px-2 font-semibold">
+                          Simpan Perubahan
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </DialogRoot>
+
+                  {/* Delete Button */}
+                  <ButtonElement bg="bg-brick" label="Hapus" icon={FaTrash} variant="outline" colorScheme="teal" onClick={() => handleDelete(item.id)} />
+                </div>
+              </Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
       </Table.Root>
     </>
   );
 };
-
-const items = [
-  { id: "R001", namapenyakit: "Hawar Daun", namagejala: "kekuningan", bobot: "0.85" },
-  { id: "R002", namapenyakit: "Bosok", namagejala: "bosok", bobot: "0.85" },
-  { id: "R003", namapenyakit: "Hawar Daun", namagejala: "kekuningan", bobot: "0.85" },
-  { id: "R004", namapenyakit: "Hawar Daun", namagejala: "kekuningan", bobot: "0.85" },
-];
 
 export default TableRelasi;

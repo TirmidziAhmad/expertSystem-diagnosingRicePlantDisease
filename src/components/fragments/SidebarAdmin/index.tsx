@@ -16,8 +16,8 @@ const SidebarAdmin: React.FC = () => {
   const menuItems: MenuItem[] = [
     { name: "Dashboard", href: "/admin/dashboard", icon: FaHome },
     { name: "Gejala", href: "/admin/gejala", icon: FaViruses },
+    { name: "Solusi", href: "/admin/solusi", icon: AiOutlineBranches },
     { name: "Penyakit", href: "/admin/penyakit", icon: MdCoronavirus },
-    { name: "Relasi", href: "/admin/relasi", icon: AiOutlineBranches },
   ];
 
   const activeMenu = useActiveMenu(menuItems);

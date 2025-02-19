@@ -82,6 +82,14 @@ Aplikasi Next.js Anda sekarang harus berjalan di `http://localhost:3000`.
 ## 6. Login dummy data yang sudah tersedia
 
 ```sh
+user{
 email : user@mail.com
 password: password123
+}
+
+admin{
+email : admin@mail.com
+password : passowrd123
+}
+
 ```
