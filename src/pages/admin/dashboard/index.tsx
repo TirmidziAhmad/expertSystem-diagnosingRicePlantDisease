@@ -9,4 +9,4 @@ const Dashboard = () => {
   );
 };
 
-export default protectedRoute(Dashboard, ["admin"]); // Replace "admin" with the appropriate role
+export default protectedRoute(Dashboard, ["admin"]);

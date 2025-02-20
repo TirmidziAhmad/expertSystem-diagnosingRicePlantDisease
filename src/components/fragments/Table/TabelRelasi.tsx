@@ -22,6 +22,8 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [editDescription, setEditDescription] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
+  const [error, setError] = useState<string>("");
+  const [deleteId, setDeleteId] = useState<number | null>(null); // New state for delete confirmation
 
   // Memoize the fetch function to prevent unnecessary re-renders
   const fetchSolutions = useCallback(() => {
@@ -44,6 +46,8 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
       setSolutions((prevSolutions) => prevSolutions.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error deleting solution:", error);
+    } finally {
+      setDeleteId(null); // Close the delete confirmation dialog
     }
   };
 
@@ -54,7 +58,7 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
 
   const handleUpdateSolution = async () => {
     if (!editId || !editDescription.trim()) {
-      return alert("Description cannot be empty!");
+      return setError("Description cannot be empty!");
     }
 
     try {
@@ -74,7 +78,7 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
 
   return (
     <>
-      <Table.Root className="mt-4 border border-gray-300" size={"lg"}>
+      <Table.Root className="mt-4 border border-gray-300" size={"lg"} striped>
         <Table.Header className="bg-beige text-white">
           <Table.Row>
             <Table.ColumnHeader>No</Table.ColumnHeader>
@@ -100,6 +104,7 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                         <DialogTitle className="font-semibold">Edit Solusi</DialogTitle>
                       </DialogHeader>
                       <DialogBody>
+                        {error && <p className="text-red-600">{error}</p>}
                         <Input className="px-2 border" value={editDescription} onChange={handleEditInputChange} placeholder="Masukkan nama solusi" />
                       </DialogBody>
                       <DialogFooter>
@@ -111,7 +116,27 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                   </DialogRoot>
 
                   {/* Delete Button */}
-                  <ButtonElement bg="bg-brick" label="Hapus" icon={FaTrash} variant="outline" colorScheme="teal" onClick={() => handleDelete(item.id)} />
+                  <DialogRoot placement={"center"}>
+                    <DialogTrigger asChild>
+                      <ButtonElement bg="bg-brick" label="Hapus" icon={FaTrash} variant="outline" colorScheme="teal" onClick={() => setDeleteId(item.id)} />
+                    </DialogTrigger>
+                    <DialogContent className="bg-white text-black">
+                      <DialogHeader>
+                        <DialogTitle className="font-semibold">Konfirmasi Penghapusan</DialogTitle>
+                      </DialogHeader>
+                      <DialogBody>
+                        <p>Apakah Anda yakin ingin menghapus solusi ini?</p>
+                      </DialogBody>
+                      <DialogFooter>
+                        <Button onClick={() => setDeleteId(null)} className="bg-gray-500 text-white px-2 font-semibold">
+                          Batal
+                        </Button>
+                        <Button onClick={() => handleDelete(deleteId!)} className="bg-red-500 text-white px-2 font-semibold">
+                          Hapus
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </DialogRoot>
                 </div>
               </Table.Cell>
             </Table.Row>
