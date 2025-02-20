@@ -1,26 +1,32 @@
 "use client";
 
 import { Table } from "@chakra-ui/react";
-import { useState } from "react";
-import { FaPenSquare } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
+import { FaPenSquare, FaTrash } from "react-icons/fa";
 import ButtonElement from "../../elements/ButtonElement";
+import { useMemo } from "react";
+import Image from "next/image";
 
-interface TableGejalaProps {
+interface TablePenyakitProps {
   searchQuery: string;
+  diseases: Disease[];
 }
 
-const TablePenyakit: React.FC<TableGejalaProps> = ({ searchQuery }) => {
-  const filteredItems = items.filter((item) => item.id.toLowerCase().includes(searchQuery.toLowerCase()) || item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+const TablePenyakit: React.FC<TablePenyakitProps> = ({ searchQuery, diseases }) => {
+  const tableHeader = useMemo(() => ["No", "Gambar", "Nama Penyakit", "Deskripsi", "Gejala", "Pengendalian", "Action"], []);
 
-  const rows = filteredItems.map((item) => (
+  const filteredItems = diseases.filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const rows = filteredItems.map((item, index) => (
     <Table.Row key={item.id} className="border-b border-gray-300 hover:bg-gray-100 transition-all">
-      <Table.Cell className="">{item.id}</Table.Cell>
-      <Table.Cell className="">{item.name}</Table.Cell>
-      <Table.Cell className="">{item.desc}</Table.Cell>
-      <Table.Cell className="">{item.control}</Table.Cell>
-      <Table.Cell className="">{item.image}</Table.Cell>
-      <Table.Cell className="">
+      <Table.Cell>{index + 1}</Table.Cell>
+      <Table.Cell>
+        <Image src={item.image} alt={item.name} width={100} height={100} />
+      </Table.Cell>
+      <Table.Cell>{item.name}</Table.Cell>
+      <Table.Cell>{item.description}</Table.Cell>
+      <Table.Cell>{item.symptoms.map((symptom: any) => symptom.symptom.name).join(", ")}</Table.Cell>
+      <Table.Cell>{item.solutions.map((solution: any) => solution.solution.description).join(", ")}</Table.Cell>
+      <Table.Cell>
         <div className="flex flex-row gap-2">
           <ButtonElement bg="bg-brick" label="Edit" icon={FaPenSquare} variant="outline" colorScheme="teal" />
           <ButtonElement bg="bg-gold" label="Hapus" icon={FaTrash} variant="outline" colorScheme="teal" />
@@ -30,31 +36,17 @@ const TablePenyakit: React.FC<TableGejalaProps> = ({ searchQuery }) => {
   ));
 
   return (
-    <>
-      <Table.Root className="mt-4 border border-gray-300 ">
-        <Table.Header className="bg-beige text-white">
-          <Table.Row>
-            <Table.ColumnHeader className="">No</Table.ColumnHeader>
-            <Table.ColumnHeader className=" ">Gambar</Table.ColumnHeader>
-            <Table.ColumnHeader className=" ">Nama Penyakit</Table.ColumnHeader>
-            <Table.ColumnHeader className=" ">Deskripsi</Table.ColumnHeader>
-            <Table.ColumnHeader className=" ">Gejala</Table.ColumnHeader>
-            <Table.ColumnHeader className=" ">Pengendalian</Table.ColumnHeader>
-            <Table.ColumnHeader className="">Action</Table.ColumnHeader>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{rows}</Table.Body>
-      </Table.Root>
-    </>
+    <Table.Root className="mt-4 border border-gray-300" striped>
+      <Table.Header className="bg-beige text-white">
+        <Table.Row>
+          {tableHeader.map((header, index) => (
+            <Table.ColumnHeader key={index}>{header}</Table.ColumnHeader>
+          ))}
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>{rows}</Table.Body>
+    </Table.Root>
   );
 };
-
-const items = [
-  { id: "G001", name: "Hawar Daun", desc: "lorem", control: "lorem", image: "/public/icon-gejala.svg" },
-  { id: "G002", name: "Wereng", desc: "lorem", control: "lorem", image: "/public/icon-gejala.svg" },
-  { id: "G003", name: "Furniture", desc: "lorem", control: "lorem", image: "/public/icon-gejala.svg" },
-  { id: "G004", name: "Electronics", desc: "lorem", control: "lorem", image: "/public/icon-gejala.svg" },
-  { id: "G005", name: "Accessories", desc: "lorem", control: "lorem", image: "/public/icon-gejala.svg" },
-];
 
 export default TablePenyakit;
