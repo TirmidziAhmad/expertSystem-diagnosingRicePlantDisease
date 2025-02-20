@@ -11,40 +11,21 @@ import InputElement from "../../../elements/InputElement";
 
 const PenyakitLayout: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-
-
   return (
     <>
       <div className="flex min-h-screen">
         <SidebarAdmin />
-        <main  className={`flex-1 p-6 sm:ml-[260px] transition-all ${
-            isModalOpen ? "brightness-50" : ""
-          }`}>
+        <main className={`flex-1 p-6 sm:ml-[260px] transition-all `}>
           <Navbar title="Overview Penyakit" />
           <section className="mt-4">
             <div className="flex flex-row justify-between">
-              <ButtonElement
-                bg="bg-sand"
-                label="Tambah Data Penyakit"
-                icon={FaPlus}
-                variant="outline"
-                colorScheme="teal"
-                link="/admin/tambahpenyakit"
-              />
-              <div className="flex items-center">
-                <InputElement
-                  icon={FaSearch}
-                  placeholder="Search"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </div>
+              <ButtonElement bg="bg-sand" label="Tambah Data Penyakit" icon={FaPlus} variant="outline" colorScheme="teal" link="/admin/tambahpenyakit" />
+              <InputElement icon={FaSearch} placeholder="Search" value={searchQuery} onChange={handleSearchChange} />
             </div>
             <TablePenyakit searchQuery={searchQuery} />
           </section>

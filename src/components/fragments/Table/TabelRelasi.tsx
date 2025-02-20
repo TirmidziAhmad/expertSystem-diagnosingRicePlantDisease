@@ -128,13 +128,20 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                         <p>Apakah Anda yakin ingin menghapus solusi ini?</p>
                       </DialogBody>
                       <DialogFooter>
-                        <Button onClick={() => setDeleteId(null)} className="bg-gray-500 text-white px-2 font-semibold">
+                        <Button
+                          onClick={() => {
+                            setDeleteId(null);
+                            document.getElementById("close-delete-dialog")?.click();
+                          }}
+                          className="bg-gray-500 text-white px-2 font-semibold"
+                        >
                           Batal
                         </Button>
                         <Button onClick={() => handleDelete(deleteId!)} className="bg-red-500 text-white px-2 font-semibold">
                           Hapus
                         </Button>
                       </DialogFooter>
+                      <DialogCloseTrigger id="close-delete-dialog" />
                     </DialogContent>
                   </DialogRoot>
                 </div>
