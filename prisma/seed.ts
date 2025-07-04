@@ -231,33 +231,33 @@ async function main() {
   // Create solutions
   const solutions = await prisma.solution.createMany({
     data: [
-      { description: "Gunakan varietas tahan." }, //1
-      { description: "Hilangkan sumber inokulum virus." },
-      { description: "Kendalikan serangga vektor." }, //3
-      { description: "Lakukan eradikasi selektif atau total." }, //4
-      { description: "Lakukan tanam serempak." }, //5
-      { description: "Mengatur waktu tanam yang tepat." }, //6
-      { description: "Gunakan sistem tanam jajar legowo." }, //7
-      { description: "Perlakuan benih dengan air panas suhu 50°C." }, //8
-      { description: "Sanitasi gulma." }, //9
-      { description: "Seimbangkan kebutuhan nitrogen." }, //10
-      { description: "Atur drainase dengan baik." }, //11
-      { description: "Lakukan pengeringan lahan selama periode bera." }, //12
-      { description: "Mengatur jarak tanam." }, //13
-      { description: "Pengairan berselang ketika tanaman sudah mencapai pembentukan malai." },
-      { description: "Gunakan APH jika masih di bawah ambang kendali." }, //15
-      { description: "Pemupukan berimbang." },
-      { description: "Kurangi penggunaan pupuk N terlalu tinggi." },
-      { description: "Sanitasi lingkungan dari inang alternatif." },
-      { description: "Pengamatan sejak awal." },
-      { description: "Seleksi benih." }, //20
-      { description: "Aplikasi pupuk berimbang." },
-      { description: "Sanitasi sisa tanaman dan gulma di sekitar sawah." },
-      { description: "Kurangi penggunaan Urea dan imbangi dengan unsur K." },
-      { description: "Lakukan pergiliran varietas." },
-      { description: "Lakukan pergiliran tanaman." }, //25
-      { description: "Gunakan benih yang sehat." },
-      { description: "Gunakan benih varietas tahan wereng hijau dan/ atau virus." },
+      { description: "Gunakan varietas tahan" }, //1
+      { description: "Hilangkan sumber inokulum virus" },
+      { description: "Kendalikan serangga vektor" }, //3
+      { description: "Lakukan eradikasi selektif atau total" }, //4
+      { description: "Lakukan tanam serempak" }, //5
+      { description: "Mengatur waktu tanam yang tepat" }, //6
+      { description: "Gunakan sistem tanam jajar legowo" }, //7
+      { description: "Perlakuan benih dengan air panas suhu 50°C" }, //8
+      { description: "Sanitasi gulma" }, //9
+      { description: "Seimbangkan kebutuhan nitrogen" }, //10
+      { description: "Atur drainase dengan baik" }, //11
+      { description: "Lakukan pengeringan lahan selama periode bera" }, //12
+      { description: "Mengatur jarak tanam" }, //13
+      { description: "Pengairan berselang ketika tanaman sudah mencapai pembentukan malai" },
+      { description: "Gunakan APH jika masih di bawah ambang kendali" }, //15
+      { description: "Pemupukan berimbang" },
+      { description: "Kurangi penggunaan pupuk N terlalu tinggi" },
+      { description: "Sanitasi lingkungan dari inang alternatif" },
+      { description: "Pengamatan sejak awal" },
+      { description: "Seleksi benih" }, //20
+      { description: "Aplikasi pupuk berimbang" },
+      { description: "Sanitasi sisa tanaman dan gulma di sekitar sawah" },
+      { description: "Kurangi penggunaan Urea dan imbangi dengan unsur K" },
+      { description: "Lakukan pergiliran varietas" },
+      { description: "Lakukan pergiliran tanaman" }, //25
+      { description: "Gunakan benih yang sehat" },
+      { description: "Gunakan benih varietas tahan wereng hijau dan/ atau virus" },
     ],
   });
 

@@ -85,11 +85,11 @@ const PenyakitLayout: React.FC = () => {
           <DialogHeader>
             <DialogTitle className="font-semibold">Tambah Penyakit</DialogTitle>
           </DialogHeader>
-          <DialogBody>
+          <DialogBody className="flex flex-col">
             {error && <p className="text-red-500">{error}</p>}
-            <input className="px-2 border" value={newDisease.name} onChange={(e) => setNewDisease({ ...newDisease, name: e.target.value })} placeholder="Masukkan nama penyakit" />
-            <input className="px-2 border mt-2" value={newDisease.image} onChange={(e) => setNewDisease({ ...newDisease, image: e.target.value })} placeholder="Masukkan URL gambar" />
-            <input className="px-2 border mt-2" value={newDisease.description} onChange={(e) => setNewDisease({ ...newDisease, description: e.target.value })} placeholder="Masukkan deskripsi" />
+            <input className="px-2 " value={newDisease.name} onChange={(e) => setNewDisease({ ...newDisease, name: e.target.value })} placeholder="Masukkan nama penyakit" />
+            <input type="longtext" className="px-2 mt-2" value={newDisease.description} onChange={(e) => setNewDisease({ ...newDisease, description: e.target.value })} placeholder="Masukkan deskripsi" />
+            <input className="px-2 mt-2" value={newDisease.image} onChange={(e) => setNewDisease({ ...newDisease, image: e.target.value })} placeholder="Masukkan URL gambar" />
           </DialogBody>
           <DialogFooter>
             <button onClick={handleAddDisease} className="bg-teal-500 text-white px-2 font-semibold">

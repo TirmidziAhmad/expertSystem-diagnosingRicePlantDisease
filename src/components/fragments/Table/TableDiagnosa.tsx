@@ -5,12 +5,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 
-const TableDiagnosa = ({ selectedSymptomCodes }) => {
-  const tableHeader = useMemo(() => ["No", "Kode Gejala", "Nama Gejala", "Checkbox"], []);
-  const [tableData, setTableData] = useState([]);
-  const [selectedCodes, setSelectedCodes] = useState([]);
+//create interface for selectedsymptomcodes
+interface SelectedSymptomCodes {
+  (codes: string[]): void;
+}
 
-  const handleCheckboxChange = (code, isChecked) => {
+const TableDiagnosa = ({ selectedSymptomCodes }: { selectedSymptomCodes: SelectedSymptomCodes }) => {
+  const tableHeader = useMemo(() => ["No", "Kode Gejala", "Nama Gejala", "Checkbox"], []);
+  const [tableData, setTableData] = useState<{ code: string; description: string }[]>([]);
+  const [selectedCodes, setSelectedCodes] = useState<string[]>([]);
+
+  const handleCheckboxChange = (code: string, isChecked: boolean) => {
     const updatedCodes = isChecked
       ? [...new Set([...selectedCodes, code])] // Use Set to ensure uniqueness when adding
       : selectedCodes.filter((c) => c !== code); // Remove if unchecked
@@ -51,7 +56,7 @@ const TableDiagnosa = ({ selectedSymptomCodes }) => {
               <Table.Cell>{item.code}</Table.Cell>
               <Table.Cell>{item.description}</Table.Cell>
               <Table.Cell>
-                <Checkbox variant="subtle" checked={selectedCodes.includes(item.code)} onCheckedChange={(checked) => handleCheckboxChange(item.code, checked)} />
+                <Checkbox variant="subtle" checked={selectedCodes.includes(item.code)} onCheckedChange={(event) => handleCheckboxChange(item.code, !!event.checked)} />
               </Table.Cell>
             </Table.Row>
           ))}
