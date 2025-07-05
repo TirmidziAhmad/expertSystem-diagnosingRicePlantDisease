@@ -1,19 +1,20 @@
 "use client";
 
-import { Table } from "@chakra-ui/react";
-import { FaPenSquare, FaTrash } from "react-icons/fa";
-import ButtonElement from "../../elements/ButtonElement";
 import { useMemo } from "react";
 import Image from "next/image";
+import { FaPenSquare, FaTrash } from "react-icons/fa";
+import ButtonElement from "../../elements/ButtonElement";
 
-interface Disease {
-  value: number;
-  image: string;
-  name: string;
-}
 interface TablePenyakitProps {
   searchQuery: string;
-  diseases: Disease[];
+  diseases: {
+    id: number;
+    name: string;
+    image: string;
+    description: string;
+    symptoms: { symptom: { description: string } }[];
+    solutions: { solution: { description: string } }[];
+  }[];
 }
 
 const TablePenyakit: React.FC<TablePenyakitProps> = ({
@@ -39,57 +40,65 @@ const TablePenyakit: React.FC<TablePenyakitProps> = ({
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const rows = filteredItems.map((item, index) => (
-    <Table.Row
-      key={item.id}
-      className="border-b border-gray-300 hover:bg-gray-100 transition-all"
-    >
-      <Table.Cell>{index + 1}</Table.Cell>
-      <Table.Cell>
-        <Image src={item.image} alt={item.name} width={100} height={100} />
-      </Table.Cell>
-      <Table.Cell>{item.name}</Table.Cell>
-      <Table.Cell>{item.description}</Table.Cell>
-      <Table.Cell>
-        {item.symptoms.map((symptom: any) => symptom.symptom.name).join(", ")}
-      </Table.Cell>
-      <Table.Cell>
-        {item.solutions
-          .map((solution: any) => solution.solution.description)
-          .join(", ")}
-      </Table.Cell>
-      <Table.Cell>
-        <div className="flex flex-row gap-2">
-          <ButtonElement
-            bg="bg-brick"
-            label="Edit"
-            icon={FaPenSquare}
-            variant="outline"
-            colorScheme="teal"
-          />
-          <ButtonElement
-            bg="bg-gold"
-            label="Hapus"
-            icon={FaTrash}
-            variant="outline"
-            colorScheme="teal"
-          />
-        </div>
-      </Table.Cell>
-    </Table.Row>
-  ));
-
   return (
-    <Table.Root className="mt-4 border border-gray-300" striped>
-      <Table.Header className="bg-beige text-white">
-        <Table.Row>
+    <table className="mt-4 w-full border border-gray-300 text-sm">
+      <thead className="bg-beige text-white">
+        <tr>
           {tableHeader.map((header, index) => (
-            <Table.ColumnHeader key={index}>{header}</Table.ColumnHeader>
+            <th key={index} className="px-4 py-2 text-left border-b">
+              {header}
+            </th>
           ))}
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>{rows}</Table.Body>
-    </Table.Root>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredItems.map((item, index) => (
+          <tr
+            key={item.id}
+            className="border-b border-gray-300 hover:bg-gray-100 transition-all"
+          >
+            <td className="px-4 py-2">{index + 1}</td>
+            <td className="px-4 py-2">
+              <Image src={item.image} alt={item.name} width={80} height={80} />
+            </td>
+            <td className="px-4 py-2">{item.name}</td>
+            <td className="px-4 py-2">{item.description}</td>
+            <td className="px-4 py-2">
+              <ul className="list-disc list-inside space-y-1">
+                {item.symptoms.map((s, i) => (
+                  <li key={i}>{s.symptom.description}</li>
+                ))}
+              </ul>
+            </td>
+            <td className="px-4 py-2">
+              <ul className="list-disc list-inside space-y-1">
+                {item.solutions.map((s, i) => (
+                  <li key={i}>{s.solution.description}</li>
+                ))}
+              </ul>
+            </td>
+            <td className="px-4 py-2">
+              <div className="flex flex-row gap-2">
+                <ButtonElement
+                  bg="bg-brick"
+                  label="Edit"
+                  icon={FaPenSquare}
+                  variant="outline"
+                  colorScheme="teal"
+                />
+                <ButtonElement
+                  bg="bg-gold"
+                  label="Hapus"
+                  icon={FaTrash}
+                  variant="outline"
+                  colorScheme="teal"
+                />
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 

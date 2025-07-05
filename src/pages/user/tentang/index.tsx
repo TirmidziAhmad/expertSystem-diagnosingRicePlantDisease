@@ -1,5 +1,5 @@
 import TentangLayout from "../../../components/layout/User/Tentang";
-import protectedRoute from "@/middleware/protectedRoute";
+import protectedRoute from "@/middleware/ProtectedRoute";
 const Tentang = () => {
   return (
     <>

@@ -1,130 +1,212 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import {
+  IncomingForm,
+  Files,
+  Fields,
+  File as FormidableFile,
+} from "formidable";
+import { writeFile, readFile as fsReadFile } from "fs/promises";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+
+interface FormidableFileWithMeta extends FormidableFile {
+  originalFilename: string | null;
+  filepath: string;
+  toBuffer?: () => Promise<Buffer>;
+}
+
+type SymptomInput = {
+  symptomId: number;
+  probability: number;
+};
+
+type SolutionInput = {
+  solutionId: number;
+};
+
+type ParsedFormData = {
+  image: string;
+  name: string;
+  description: string;
+  symptoms: SymptomInput[];
+  solutions: SolutionInput[];
+};
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    if (req.method === "GET") {
-      // Get all diseases with symptoms & solutions or a single disease by ID
-      const { id } = req.query;
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-      if (id) {
-        const disease = await prisma.disease.findUnique({
-          where: { id: Number(id) },
+async function parseFormData(req: NextApiRequest): Promise<ParsedFormData> {
+  const form = new IncomingForm({ keepExtensions: true, multiples: true });
+  return new Promise((resolve, reject) => {
+    form.parse(req, async (err: Error | null, fields: Fields, files: Files) => {
+      if (err) return reject(err);
+
+      try {
+        const name =
+          typeof fields.name === "string"
+            ? fields.name
+            : Array.isArray(fields.name)
+            ? fields.name[0]
+            : "";
+        const description =
+          typeof fields.description === "string"
+            ? fields.description
+            : Array.isArray(fields.description)
+            ? fields.description[0]
+            : "";
+        const symptoms: SymptomInput[] = JSON.parse(
+          typeof fields.symptoms === "string"
+            ? fields.symptoms
+            : Array.isArray(fields.symptoms)
+            ? fields.symptoms[0]
+            : "[]"
+        );
+        const solutions: SolutionInput[] = JSON.parse(
+          typeof fields.solutions === "string"
+            ? fields.solutions
+            : Array.isArray(fields.solutions)
+            ? fields.solutions[0]
+            : "[]"
+        );
+
+        let imagePath = "";
+
+        const fileInput = files.image;
+        const file = (
+          Array.isArray(fileInput) ? fileInput[0] : fileInput
+        ) as FormidableFileWithMeta;
+
+        if (file && file.filepath && file.originalFilename) {
+          const fileName = `${uuidv4()}-${file.originalFilename}`;
+          const destPath = path.join(process.cwd(), "public/uploads", fileName);
+          const data = await fsReadFile(file.filepath);
+          await writeFile(destPath, data);
+          imagePath = `/uploads/${fileName}`;
+        }
+
+        resolve({ image: imagePath, name, description, symptoms, solutions });
+      } catch (parseError) {
+        reject(parseError);
+      }
+    });
+  });
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  try {
+    switch (req.method) {
+      case "GET": {
+        const diseases = await prisma.disease.findMany({
+          include: {
+            symptoms: { include: { symptom: true } },
+            solutions: { include: { solution: true } },
+          },
+        });
+        return res.status(200).json(diseases);
+      }
+
+      case "POST": {
+        const { image, name, description, symptoms, solutions } =
+          await parseFormData(req);
+
+        const disease = await prisma.disease.create({
+          data: {
+            image,
+            name,
+            description,
+            symptoms: {
+              create: symptoms.map((s) => ({
+                symptomId: s.symptomId,
+                probability: s.probability,
+              })),
+            },
+            solutions: {
+              create: solutions.map((s) => ({
+                solutionId: s.solutionId,
+              })),
+            },
+          },
           include: {
             symptoms: { include: { symptom: true } },
             solutions: { include: { solution: true } },
           },
         });
 
-        if (!disease) return res.status(404).json({ message: "Disease not found" });
         return res.status(200).json(disease);
       }
 
-      const diseases = await prisma.disease.findMany({
-        include: {
-          symptoms: { include: { symptom: true } },
-          solutions: { include: { solution: true } },
-        },
-      });
+      case "PUT": {
+        const body = req.body as {
+          id: number;
+          image: string;
+          name: string;
+          description: string;
+          symptoms: SymptomInput[];
+          solutions: SolutionInput[];
+        };
 
-      return res.status(200).json(diseases);
-    }
+        const { id, image, name, description, symptoms, solutions } = body;
 
-    if (req.method === "POST") {
-      // Create a new disease with symptoms & solutions
-      const { name, image, description, symptoms, solutions } = req.body;
+        await prisma.diseaseSymptom.deleteMany({ where: { diseaseId: id } });
+        await prisma.diseaseSolution.deleteMany({ where: { diseaseId: id } });
 
-      if (!name || !image || !description) {
-        return res.status(400).json({ message: "Name, image, and description are required" });
-      }
-
-      const newDisease = await prisma.disease.create({
-        data: {
-          name,
-          image,
-          description,
-          symptoms: {
-            create:
-              symptoms?.map((s: { symptomId: number; probability: number }) => ({
+        const updatedDisease = await prisma.disease.update({
+          where: { id },
+          data: {
+            image,
+            name,
+            description,
+            symptoms: {
+              create: symptoms.map((s) => ({
                 symptomId: s.symptomId,
                 probability: s.probability,
-              })) || [],
-          },
-          solutions: {
-            create:
-              solutions?.map((s: { solutionId: number }) => ({
+              })),
+            },
+            solutions: {
+              create: solutions.map((s) => ({
                 solutionId: s.solutionId,
-              })) || [],
+              })),
+            },
           },
-        },
-        include: {
-          symptoms: { include: { symptom: true } },
-          solutions: { include: { solution: true } },
-        },
-      });
+          include: {
+            symptoms: { include: { symptom: true } },
+            solutions: { include: { solution: true } },
+          },
+        });
 
-      return res.status(201).json(newDisease);
-    }
-
-    if (req.method === "PUT") {
-      // Update a disease, including symptoms & solutions
-      const { id, name, image, description, symptoms, solutions } = req.body;
-
-      if (!id || !name || !image || !description) {
-        return res.status(400).json({ message: "ID, name, image, and description are required" });
+        return res.status(200).json(updatedDisease);
       }
 
-      const updatedDisease = await prisma.disease.update({
-        where: { id: Number(id) },
-        data: {
-          name,
-          image,
-          description,
-          symptoms: {
-            deleteMany: {}, // Clear existing symptoms
-            create:
-              symptoms?.map((s: { symptomId: number; probability: number }) => ({
-                symptomId: s.symptomId,
-                probability: s.probability,
-              })) || [],
-          },
-          solutions: {
-            deleteMany: {}, // Clear existing solutions
-            create:
-              solutions?.map((s: { solutionId: number }) => ({
-                solutionId: s.solutionId,
-              })) || [],
-          },
-        },
-        include: {
-          symptoms: { include: { symptom: true } },
-          solutions: { include: { solution: true } },
-        },
-      });
+      case "DELETE": {
+        const { id } = req.body as { id: number };
 
-      return res.status(200).json(updatedDisease);
-    }
+        await prisma.diseaseSymptom.deleteMany({ where: { diseaseId: id } });
+        await prisma.diseaseSolution.deleteMany({ where: { diseaseId: id } });
+        await prisma.consultation.updateMany({
+          where: { diseaseId: id },
+          data: { diseaseId: null },
+        });
+        const deleted = await prisma.disease.delete({ where: { id } });
 
-    if (req.method === "DELETE") {
-      // Delete a disease
-      const { id } = req.body;
-
-      if (!id) {
-        return res.status(400).json({ message: "ID is required" });
+        return res
+          .status(200)
+          .json({ message: "Disease deleted successfully", deleted });
       }
 
-      await prisma.disease.delete({
-        where: { id: Number(id) },
-      });
-
-      return res.status(200).json({ message: "Disease deleted successfully" });
+      default:
+        return res.status(405).json({ error: "Method not allowed" });
     }
-
-    res.status(405).json({ message: "Method Not Allowed" });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error);
+    return res.status(500).json({ error: "Server error" });
   }
 }

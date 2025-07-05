@@ -1,91 +1,155 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import SidebarAdmin from "../../../fragments/SidebarAdmin";
 import Navbar from "../../../fragments/Navbar";
 import Footer from "../../../fragments/Footer";
 import TableGejala from "../../../fragments/Table/TabelGejala";
-import { FaPlus, FaSearch, FaBackspace, FaSave } from "react-icons/fa";
-import ButtonElement from "../../../elements/ButtonElement";
+import { FaPlus, FaSearch } from "react-icons/fa";
+// import ButtonElement from "../../../elements/ButtonElement";
 import InputElement from "../../../elements/InputElement";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button, Input } from "@chakra-ui/react";
+import axios from "axios";
 
 const GejalaLayout: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string>("");
+  const [refreshTable, setRefreshTable] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    },
+    []
+  );
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+  const handleSubmit = async () => {
+    if (!description || !code) {
+      setError("Deskripsi dan kode harus diisi.");
+      return;
+    }
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+    try {
+      if (isEditMode && editId !== null) {
+        // PUT - Update
+        await axios.put("/api/admin/symptom", {
+          id: editId,
+          description,
+          code,
+        });
+      } else {
+        // POST - Tambah
+        await axios.post("/api/admin/symptom", {
+          description,
+          code,
+        });
+      }
+
+      setDescription("");
+      setCode("");
+      setEditId(null);
+      setIsEditMode(false);
+      setError("");
+      setRefreshTable((prev) => !prev);
+      document.getElementById("close-add-dialog")?.click();
+    } catch {
+      setError("Gagal menyimpan gejala.");
+    }
   };
 
   return (
-    <>
+    <DialogRoot placement={"center"}>
       <div className="flex min-h-screen">
         <SidebarAdmin />
-        <main  className={`flex-1 p-6 sm:ml-[260px] transition-all ${
-            isModalOpen ? "brightness-50" : ""
-          }`}>
+        <main className="flex-1 p-6 sm:ml-[260px]">
           <Navbar title="Overview Gejala" />
           <section className="mt-4">
             <div className="flex flex-row justify-between">
-              <ButtonElement
-                onClick={handleOpenModal}
-                bg="bg-olive"
-                label="Tambah Data Gejala"
-                icon={FaPlus}
-                variant="outline"
-                colorScheme="teal"
+              <DialogTrigger asChild>
+                <Button
+                  id="open-add-dialog"
+                  className="bg-sand rounded-md w-[150px] font-semibold text-white"
+                  onClick={() => {
+                    setDescription("");
+                    setCode("");
+                    setEditId(null);
+                    setIsEditMode(false);
+                    setError("");
+                  }}
+                >
+                  <FaPlus /> Tambah Gejala
+                </Button>
+              </DialogTrigger>
+              <InputElement
+                icon={FaSearch}
+                placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
-              <div className="flex items-center">
-                <InputElement
-                  icon={FaSearch}
-                  placeholder="Search"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-              </div>
             </div>
-            <TableGejala searchQuery={searchQuery} />
+            <TableGejala
+              searchQuery={searchQuery}
+              refreshTable={refreshTable}
+              setRefreshTable={setRefreshTable}
+              onEdit={(item) => {
+                setDescription(item.description);
+                setCode(item.code);
+                setEditId(item.id);
+                setIsEditMode(true);
+                document.getElementById("open-add-dialog")?.click();
+              }}
+            />
           </section>
           <Footer />
         </main>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-md shadow-lg z-10 w-[400px]">
-            <h2 className="text-lg font-semibold mb-4">Tambah Data Gejala</h2>
-            <input
-              type="text"
-              placeholder="Masukkan data gejala"
-              className="border w-full px-3 py-2 rounded-md mb-4 "
-            />
-            <div className="flex justify-end gap-2">
-              <ButtonElement
-                onClick={handleCloseModal}
-                bg="bg-blue"
-                label="Kembali"
-                icon={FaBackspace}
-                variant="outline"
-              />
-              <ButtonElement
-                bg="bg-green"
-                label="Simpan"
-                icon={FaSave}
-                variant="outline"
-              />
-            </div>
-          </div>
-          </div>
-      )}
-    </>
+      <DialogContent className="bg-white text-black">
+        <DialogCloseTrigger id="close-add-dialog" />
+        <DialogHeader>
+          <DialogTitle className="font-semibold">
+            {isEditMode ? "Edit Gejala" : "Tambah Gejala"}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          {error && <p className="text-red-500">{error}</p>}
+          <Input
+            placeholder="Kode gejala"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="border px-2"
+          />
+          <Input
+            placeholder="Deskripsi gejala"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="border px-2"
+          />
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            onClick={handleSubmit}
+            className="bg-teal-500 text-white px-4 py-2 rounded font-semibold"
+          >
+            Simpan
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </DialogRoot>
   );
 };
 

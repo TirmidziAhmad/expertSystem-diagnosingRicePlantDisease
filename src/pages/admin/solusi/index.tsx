@@ -1,5 +1,5 @@
 import SolusiLayout from "../../../components/layout/Admin/Solusi";
-import protectedRoute from "@/middleware/protectedRoute";
+import protectedRoute from "@/middleware/ProtectedRoute";
 
 const Solusi = () => {
   return <SolusiLayout />;
