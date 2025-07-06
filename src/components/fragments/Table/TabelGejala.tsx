@@ -1,10 +1,8 @@
 "use client";
 
 import { Table } from "@chakra-ui/react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
-import { FaPenSquare } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
+import { FaPenSquare, FaTrash } from "react-icons/fa";
 import ButtonElement from "../../elements/ButtonElement";
 import axios from "axios";
 
@@ -28,37 +26,13 @@ const TableGejala: React.FC<TableGejalaProps> = ({
   onEdit,
 }) => {
   const [gejala, setGejala] = useState<GejalaItem[]>([]);
-  const [selection, setSelection] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchGejala = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get("/api/admin/symptom");
-        setGejala(response.data);
-      } catch (err) {
-        console.error("Error fetching gejala:", err);
-        setError("Failed to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGejala();
-  }, []);
 
   const fetchGejala = async () => {
     try {
-      setLoading(true);
       const response = await axios.get("/api/admin/symptom");
       setGejala(response.data);
     } catch (err) {
       console.error("Error fetching gejala:", err);
-      setError("Failed to load data");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -85,33 +59,11 @@ const TableGejala: React.FC<TableGejalaProps> = ({
       item?.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   const rows = filteredItems.map((item) => (
     <Table.Row
       key={item.code}
-      data-selected={selection.includes(item.code) ? "" : undefined}
       className="border-b border-gray-300 hover:bg-gray-100 transition-all"
     >
-      <Table.Cell className="py-2 px-4">
-        <Checkbox
-          aria-label="Select row"
-          checked={selection.includes(item.code)}
-          onCheckedChange={(changes) => {
-            setSelection((prev) =>
-              changes
-                ? [...prev, item.code]
-                : prev.filter((code) => code !== item.code)
-            );
-          }}
-        />
-      </Table.Cell>
       <Table.Cell className="py-2 px-4">{item.code}</Table.Cell>
       <Table.Cell className="py-2 px-4">{item.description}</Table.Cell>
       <Table.Cell className="py-2 px-4">
@@ -138,17 +90,16 @@ const TableGejala: React.FC<TableGejalaProps> = ({
   ));
 
   return (
-    <Table.Root className="mt-4 border border-gray-300 item-center text-center">
+    <Table.Root className="mt-4 border border-gray-300" striped>
       <Table.Header className="bg-beige text-white">
         <Table.Row>
-          <Table.ColumnHeader />
-          <Table.ColumnHeader className="py-2 px-14 text-center">
+          <Table.ColumnHeader className="py-2 px-14 bg-beige text-white">
             Kode Gejala
           </Table.ColumnHeader>
-          <Table.ColumnHeader className="py-2 px-60 text-center">
+          <Table.ColumnHeader className="py-2 px-60 bg-beige text-white">
             Nama Gejala
           </Table.ColumnHeader>
-          <Table.ColumnHeader className="py-2 px-30 text-center">
+          <Table.ColumnHeader className="py-2 px-30 bg-beige text-white">
             Action
           </Table.ColumnHeader>
         </Table.Row>

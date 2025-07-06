@@ -1,5 +1,5 @@
 import PengetahuanLayout from "../../../components/layout/User/Pengetahuan";
-import protectedRoute from "@/middleware/ProtectedRoute";
+import protectedRoute from "@/middleware/protectedroute";
 const Pengetahuan = () => {
   return (
     <>

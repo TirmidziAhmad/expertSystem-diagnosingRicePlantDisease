@@ -11,7 +11,15 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { Button } from "@chakra-ui/react";
 import Image from "next/image";
-import { DialogBody, DialogCloseTrigger, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogRoot } from "@/components/ui/dialog";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogRoot,
+} from "@/components/ui/dialog";
 import parseFloatToPercentage from "@/lib/parseFloatToPercentage";
 import parseDate from "@/lib/parseDate";
 
@@ -33,7 +41,9 @@ interface DataProps {
 const DiagnosaLayout: React.FC = () => {
   const userId = Number(Cookies.get("userId"));
 
-  const [selectedSymptomCodes, setSelectedSymptomCodes] = useState<string[]>([]);
+  const [selectedSymptomCodes, setSelectedSymptomCodes] = useState<string[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<DataProps | null>(null);
@@ -63,8 +73,10 @@ const DiagnosaLayout: React.FC = () => {
       });
 
       setData(response.data.data);
-    } catch (error) {
-      setError(error.response?.data?.message || "An error occurred during diagnosis");
+    } catch (error: any) {
+      setError(
+        error.response?.data?.message || "An error occurred during diagnosis"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +89,11 @@ const DiagnosaLayout: React.FC = () => {
         <main className="flex-1 p-6 sm:ml-[260px]">
           <Navbar title="Diagnosa" />
           <section className="mt-4">
-            <Hero title="" subtitle="Silahkan memilih gejala yang sesuai dengan kondisi tanaman padi anda..." imageSrc="/total-pengetahuan.svg" />
+            <Hero
+              title=""
+              subtitle="Silahkan memilih gejala yang sesuai dengan kondisi tanaman padi anda..."
+              imageSrc="/total-pengetahuan.svg"
+            />
           </section>
 
           <TableDiagnosa selectedSymptomCodes={handleSelectedSymptomCodes} />
@@ -86,7 +102,12 @@ const DiagnosaLayout: React.FC = () => {
 
           <div className="flex justify-end mt-3">
             <DialogTrigger>
-              <Button variant="outline" className="bg-[#352802] text-white px-3 font-semibold hover:bg-[#4A3C18]" onClick={handleButtonDiagnose} disabled={isLoading}>
+              <Button
+                variant="outline"
+                className="bg-[#352802] text-white px-3 font-semibold hover:bg-[#4A3C18]"
+                onClick={handleButtonDiagnose}
+                disabled={isLoading}
+              >
                 {isLoading ? "Memproses..." : `Mulai Diagnosa`}
                 <FaSearch />
               </Button>
@@ -96,20 +117,37 @@ const DiagnosaLayout: React.FC = () => {
           {data && (
             <DialogContent className="bg-[#FFFDF9] text-[#352802]">
               <DialogHeader>
-                <DialogTitle className="font-bold">Detail Riwayat Konsultasi</DialogTitle>
+                <DialogTitle className="font-bold">
+                  Detail Riwayat Konsultasi
+                </DialogTitle>
               </DialogHeader>
               <DialogBody>
                 <div className="flex justify-center items-center">
-                  <Image src={data.disease.image} alt={data.disease.name} className="rounded-lg mb-4" width={300} height={300} />
+                  <Image
+                    src={data.disease.image}
+                    alt={data.disease.name}
+                    className="rounded-lg mb-4"
+                    width={300}
+                    height={300}
+                  />
                 </div>
                 <p>
                   <strong>Penyakit:</strong> {data.disease.name}
                 </p>
                 <p>
-                  <strong>Nilai Presentase:</strong> {parseFloatToPercentage(data.disease.value)}
+                  <strong>Nilai Presentase:</strong>{" "}
+                  {parseFloatToPercentage(data.disease.value)}
                 </p>
                 <p>
-                  <strong>Kemungkinan Penyakit Lain:</strong> {data.otherDiseases.length > 0 ? data.otherDiseases.map((d) => `${d.name} (${parseFloatToPercentage(d.value)})`).join(", ") : "Tidak ada"}
+                  <strong>Kemungkinan Penyakit Lain:</strong>{" "}
+                  {data.otherDiseases.length > 0
+                    ? data.otherDiseases
+                        .map(
+                          (d) =>
+                            `${d.name} (${parseFloatToPercentage(d.value)})`
+                        )
+                        .join(", ")
+                    : "Tidak ada"}
                 </p>
                 <p>
                   <strong>Waktu Konsultasi:</strong> {parseDate(data.createdAt)}
@@ -117,11 +155,25 @@ const DiagnosaLayout: React.FC = () => {
                 <p>
                   <strong>Solusi:</strong>
                 </p>
-                <ul className="list-disc pl-5">{data.solutions.length > 0 ? data.solutions.map((solution, i) => <li key={i}>{solution}</li>) : <li>Tidak ada solusi yang tersedia.</li>}</ul>
+                <ul className="list-disc pl-5">
+                  {data.solutions.length > 0 ? (
+                    data.solutions.map((solution, i) => (
+                      <li key={i}>{solution}</li>
+                    ))
+                  ) : (
+                    <li>Tidak ada solusi yang tersedia.</li>
+                  )}
+                </ul>
                 <p>
                   <strong>Kode Gejala yang di-Input:</strong>
                 </p>
-                <ul className="list-disc pl-5">{data.userInput.length > 0 ? data.userInput.map((input, i) => <li key={i}>{input}</li>) : <li>Tidak ada data input pengguna.</li>}</ul>
+                <ul className="list-disc pl-5">
+                  {data.userInput.length > 0 ? (
+                    data.userInput.map((input, i) => <li key={i}>{input}</li>)
+                  ) : (
+                    <li>Tidak ada data input pengguna.</li>
+                  )}
+                </ul>
               </DialogBody>
               <DialogCloseTrigger />
             </DialogContent>

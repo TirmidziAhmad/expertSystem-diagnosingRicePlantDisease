@@ -5,7 +5,16 @@ import { Table, Input, Button } from "@chakra-ui/react";
 import { FaPenSquare, FaTrash } from "react-icons/fa";
 import ButtonElement from "../../elements/ButtonElement";
 import axios from "axios";
-import { DialogBody, DialogCloseTrigger, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface TableRelasiProps {
   searchQuery: string;
@@ -18,14 +27,17 @@ interface Solution {
   description: string;
 }
 
-const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, setRefreshTable }) => {
+const TableRelasi: React.FC<TableRelasiProps> = ({
+  searchQuery,
+  refreshTable,
+  setRefreshTable,
+}) => {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [editDescription, setEditDescription] = useState("");
   const [editId, setEditId] = useState<number | null>(null);
   const [error, setError] = useState<string>("");
-  const [deleteId, setDeleteId] = useState<number | null>(null); // New state for delete confirmation
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  // Memoize the fetch function to prevent unnecessary re-renders
   const fetchSolutions = useCallback(() => {
     axios
       .get("/api/admin/solution")
@@ -37,17 +49,24 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
     fetchSolutions();
   }, [refreshTable, fetchSolutions]);
 
-  // Memoize the filtered items
-  const filteredItems = searchQuery ? solutions.filter((item) => item.id.toString().includes(searchQuery.toLowerCase()) || item.description.toLowerCase().includes(searchQuery.toLowerCase())) : solutions;
+  const filteredItems = searchQuery
+    ? solutions.filter(
+        (item) =>
+          item.id.toString().includes(searchQuery.toLowerCase()) ||
+          item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : solutions;
 
   const handleDelete = async (id: number) => {
     try {
       await axios.delete("/api/admin/solution", { data: { id } });
-      setSolutions((prevSolutions) => prevSolutions.filter((item) => item.id !== id));
+      setSolutions((prevSolutions) =>
+        prevSolutions.filter((item) => item.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting solution:", error);
     } finally {
-      setDeleteId(null); // Close the delete confirmation dialog
+      setDeleteId(null);
     }
   };
 
@@ -62,7 +81,10 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
     }
 
     try {
-      await axios.put("/api/admin/solution", { id: editId, description: editDescription });
+      await axios.put("/api/admin/solution", {
+        id: editId,
+        description: editDescription,
+      });
       setEditId(null);
       setEditDescription("");
       setRefreshTable(!refreshTable);
@@ -88,7 +110,10 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
         </Table.Header>
         <Table.Body>
           {filteredItems.map((item, index) => (
-            <Table.Row key={item.id} className="border-b border-gray-300 hover:bg-gray-100">
+            <Table.Row
+              key={item.id}
+              className="border-b border-gray-300 hover:bg-gray-100"
+            >
               <Table.Cell>{index + 1}</Table.Cell>
               <Table.Cell>{item.description}</Table.Cell>
               <Table.Cell>
@@ -96,19 +121,36 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                   {/* Edit Button */}
                   <DialogRoot placement={"center"}>
                     <DialogTrigger asChild>
-                      <ButtonElement bg="bg-gold" label="Edit" icon={FaPenSquare} variant="outline" colorScheme="teal" onClick={() => handleEdit(item.id, item.description)} />
+                      <ButtonElement
+                        bg="bg-gold"
+                        label="Edit"
+                        icon={FaPenSquare}
+                        variant="outline"
+                        colorScheme="teal"
+                        onClick={() => handleEdit(item.id, item.description)}
+                      />
                     </DialogTrigger>
                     <DialogContent className="bg-white text-black">
                       <DialogCloseTrigger id="close-edit-dialog" />
                       <DialogHeader>
-                        <DialogTitle className="font-semibold">Edit Solusi</DialogTitle>
+                        <DialogTitle className="font-semibold">
+                          Edit Solusi
+                        </DialogTitle>
                       </DialogHeader>
                       <DialogBody>
                         {error && <p className="text-red-600">{error}</p>}
-                        <Input className="px-2 border" value={editDescription} onChange={handleEditInputChange} placeholder="Masukkan nama solusi" />
+                        <Input
+                          className="px-2 border"
+                          value={editDescription}
+                          onChange={handleEditInputChange}
+                          placeholder="Masukkan nama solusi"
+                        />
                       </DialogBody>
                       <DialogFooter>
-                        <Button onClick={handleUpdateSolution} className="bg-teal-500 text-white px-2 font-semibold">
+                        <Button
+                          onClick={handleUpdateSolution}
+                          className="bg-teal-500 text-white px-2 font-semibold"
+                        >
                           Simpan Perubahan
                         </Button>
                       </DialogFooter>
@@ -118,11 +160,20 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                   {/* Delete Button */}
                   <DialogRoot placement={"center"}>
                     <DialogTrigger asChild>
-                      <ButtonElement bg="bg-brick" label="Hapus" icon={FaTrash} variant="outline" colorScheme="teal" onClick={() => setDeleteId(item.id)} />
+                      <ButtonElement
+                        bg="bg-brick"
+                        label="Hapus"
+                        icon={FaTrash}
+                        variant="outline"
+                        colorScheme="teal"
+                        onClick={() => setDeleteId(item.id)}
+                      />
                     </DialogTrigger>
                     <DialogContent className="bg-white text-black">
                       <DialogHeader>
-                        <DialogTitle className="font-semibold">Konfirmasi Penghapusan</DialogTitle>
+                        <DialogTitle className="font-semibold">
+                          Konfirmasi Penghapusan
+                        </DialogTitle>
                       </DialogHeader>
                       <DialogBody>
                         <p>Apakah Anda yakin ingin menghapus solusi ini?</p>
@@ -131,13 +182,18 @@ const TableRelasi: React.FC<TableRelasiProps> = ({ searchQuery, refreshTable, se
                         <Button
                           onClick={() => {
                             setDeleteId(null);
-                            document.getElementById("close-delete-dialog")?.click();
+                            document
+                              .getElementById("close-delete-dialog")
+                              ?.click();
                           }}
                           className="bg-gray-500 text-white px-2 font-semibold"
                         >
                           Batal
                         </Button>
-                        <Button onClick={() => handleDelete(deleteId!)} className="bg-red-500 text-white px-2 font-semibold">
+                        <Button
+                          onClick={() => handleDelete(deleteId!)}
+                          className="bg-red-500 text-white px-2 font-semibold"
+                        >
                           Hapus
                         </Button>
                       </DialogFooter>

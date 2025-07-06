@@ -1,5 +1,5 @@
 import DashboardLayout from "../../../components/layout/Admin/Dashboard";
-import protectedRoute from "@/middleware/ProtectedRoute";
+import protectedRoute from "@/middleware/protectedroute";
 
 const Dashboard = () => {
   return (

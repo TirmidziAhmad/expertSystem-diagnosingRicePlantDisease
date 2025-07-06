@@ -45,14 +45,12 @@ const GejalaLayout: React.FC = () => {
 
     try {
       if (isEditMode && editId !== null) {
-        // PUT - Update
         await axios.put("/api/admin/symptom", {
           id: editId,
           description,
           code,
         });
       } else {
-        // POST - Tambah
         await axios.post("/api/admin/symptom", {
           description,
           code,
@@ -65,7 +63,6 @@ const GejalaLayout: React.FC = () => {
       setIsEditMode(false);
       setError("");
       setRefreshTable((prev) => !prev);
-      document.getElementById("close-add-dialog")?.click();
     } catch {
       setError("Gagal menyimpan gejala.");
     }
@@ -127,14 +124,16 @@ const GejalaLayout: React.FC = () => {
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           {error && <p className="text-red-500">{error}</p>}
+          <p>Kode Gejala</p>
           <Input
-            placeholder="Kode gejala"
+            placeholder="Masukkan Kode gejala"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             className="border px-2"
           />
+          <p>Deskriptsi Gejala</p>
           <Input
-            placeholder="Deskripsi gejala"
+            placeholder="Masukkan Deskripsi gejala"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="border px-2"

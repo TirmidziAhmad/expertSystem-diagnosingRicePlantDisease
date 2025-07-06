@@ -1,5 +1,5 @@
 import HasilDiagnosaa from "../../../components/layout/User/HasilDiagnosaa";
-import protectedRoute from "@/middleware/ProtectedRoute";
+import protectedRoute from "@/middleware/protectedroute";
 const HasilDiagnosa = () => {
   return (
     <>

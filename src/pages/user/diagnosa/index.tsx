@@ -1,4 +1,4 @@
-import protectedRoute from "@/middleware/ProtectedRoute";
+import protectedRoute from "@/middleware/protectedroute";
 import DiagnosaLayout from "../../../components/layout/User/Diagnosa";
 
 const Diagnosa = () => {

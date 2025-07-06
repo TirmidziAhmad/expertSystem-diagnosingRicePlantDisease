@@ -1,5 +1,5 @@
 import RiwayatLayout from "../../../components/layout/User/Riwayat";
-import protectedRoute from "@/middleware/ProtectedRoute";
+import protectedRoute from "@/middleware/protectedroute";
 const Riwayat = () => {
   return (
     <>
