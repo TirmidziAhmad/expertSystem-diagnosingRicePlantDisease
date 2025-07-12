@@ -1,11 +1,7 @@
-import TambahPenyakitLayout from "../../../components/layout/Admin/TambahPenyakit";
+// import TambahPenyakitLayout from "../../../components/layout/Admin/TambahPenyakit";
 
-const TambahPenyakit = () => {
-    return (
-        <>
-        <TambahPenyakitLayout />
-        </>
-    )
-}
+// const TambahPenyakit = () => {
+//   return <TambahPenyakitLayout />;
+// };
 
-export default TambahPenyakit;
+// export default TambahPenyakit;

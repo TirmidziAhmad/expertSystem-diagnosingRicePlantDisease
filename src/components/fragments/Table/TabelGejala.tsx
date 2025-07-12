@@ -1,10 +1,19 @@
 "use client";
 
-import { Table } from "@chakra-ui/react";
+import { Table, Button } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { FaPenSquare, FaTrash } from "react-icons/fa";
 import ButtonElement from "../../elements/ButtonElement";
 import axios from "axios";
+import {
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface GejalaItem {
   id: number;
@@ -26,6 +35,9 @@ const TableGejala: React.FC<TableGejalaProps> = ({
   onEdit,
 }) => {
   const [gejala, setGejala] = useState<GejalaItem[]>([]);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchGejala = async () => {
     try {
@@ -45,11 +57,15 @@ const TableGejala: React.FC<TableGejalaProps> = ({
   }, [refreshTable]);
 
   const handleDelete = async (id: number) => {
+    setIsLoading(true);
     try {
       await axios.delete("/api/admin/symptom", { data: { id } });
       setRefreshTable((prev) => !prev);
     } catch (err) {
       console.error("Gagal menghapus gejala", err);
+    } finally {
+      setIsLoading(false);
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -76,14 +92,56 @@ const TableGejala: React.FC<TableGejalaProps> = ({
             colorScheme="teal"
             onClick={() => onEdit(item)}
           />
-          <ButtonElement
-            bg="bg-gold"
-            label="Hapus"
-            icon={FaTrash}
-            variant="outline"
-            colorScheme="teal"
-            onClick={() => handleDelete(item.id)}
-          />
+
+          <DialogRoot
+            placement="center"
+            open={isDeleteDialogOpen && deleteId === item.id}
+            onOpenChange={(open) => {
+              if (!open) {
+                setIsDeleteDialogOpen(false);
+                setDeleteId(null);
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <ButtonElement
+                bg="bg-gold"
+                label="Hapus"
+                icon={FaTrash}
+                variant="outline"
+                colorScheme="teal"
+                onClick={() => {
+                  setDeleteId(item.id);
+                  setIsDeleteDialogOpen(true);
+                }}
+              />
+            </DialogTrigger>
+            <DialogContent className="bg-white text-black">
+              <DialogHeader>
+                <DialogTitle className="font-semibold">
+                  Konfirmasi Penghapusan
+                </DialogTitle>
+              </DialogHeader>
+              <DialogBody>
+                <p>Apakah Anda yakin ingin menghapus gejala ini?</p>
+              </DialogBody>
+              <DialogFooter>
+                <Button
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                  className="bg-gray-500 text-white px-2 font-semibold"
+                  disabled={isLoading}
+                >
+                  Batal
+                </Button>
+                <Button
+                  onClick={() => handleDelete(item.id)}
+                  className="bg-red-500 text-white px-2 font-semibold"
+                >
+                  Hapus
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </DialogRoot>
         </div>
       </Table.Cell>
     </Table.Row>

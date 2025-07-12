@@ -187,15 +187,25 @@ export default async function handler(
       }
 
       case "DELETE": {
-        const { id } = req.body as { id: number };
+        const { id } = req.query;
+        if (!id || Array.isArray(id)) {
+          return res.status(400).json({ error: "Invalid disease ID" });
+        }
 
-        await prisma.diseaseSymptom.deleteMany({ where: { diseaseId: id } });
-        await prisma.diseaseSolution.deleteMany({ where: { diseaseId: id } });
+        const diseaseId = parseInt(id);
+        if (isNaN(diseaseId)) {
+          return res.status(400).json({ error: "Invalid disease ID" });
+        }
+
+        await prisma.diseaseSymptom.deleteMany({ where: { diseaseId } });
+        await prisma.diseaseSolution.deleteMany({ where: { diseaseId } });
         await prisma.consultation.updateMany({
-          where: { diseaseId: id },
+          where: { diseaseId },
           data: { diseaseId: null },
         });
-        const deleted = await prisma.disease.delete({ where: { id } });
+        const deleted = await prisma.disease.delete({
+          where: { id: diseaseId },
+        });
 
         return res
           .status(200)

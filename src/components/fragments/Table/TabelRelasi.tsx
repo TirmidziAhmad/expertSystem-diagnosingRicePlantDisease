@@ -101,11 +101,17 @@ const TableRelasi: React.FC<TableRelasiProps> = ({
   return (
     <>
       <Table.Root className="mt-4 border border-gray-300" size={"lg"} striped>
-        <Table.Header className="bg-beige text-white">
+        <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader>No</Table.ColumnHeader>
-            <Table.ColumnHeader>Nama Solusi</Table.ColumnHeader>
-            <Table.ColumnHeader>Aksi</Table.ColumnHeader>
+            <Table.ColumnHeader className="bg-beige text-white">
+              No
+            </Table.ColumnHeader>
+            <Table.ColumnHeader className="bg-beige text-white">
+              Nama Solusi
+            </Table.ColumnHeader>
+            <Table.ColumnHeader className="bg-beige text-white">
+              Aksi
+            </Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>

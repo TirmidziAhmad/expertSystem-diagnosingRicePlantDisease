@@ -1,3 +1,4 @@
+// GejalaLayout.tsx
 "use client";
 
 import React, { useState, useCallback } from "react";
@@ -6,7 +7,6 @@ import Navbar from "../../../fragments/Navbar";
 import Footer from "../../../fragments/Footer";
 import TableGejala from "../../../fragments/Table/TabelGejala";
 import { FaPlus, FaSearch } from "react-icons/fa";
-// import ButtonElement from "../../../elements/ButtonElement";
 import InputElement from "../../../elements/InputElement";
 import {
   DialogBody,
@@ -29,6 +29,7 @@ const GejalaLayout: React.FC = () => {
   const [refreshTable, setRefreshTable] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +64,15 @@ const GejalaLayout: React.FC = () => {
       setIsEditMode(false);
       setError("");
       setRefreshTable((prev) => !prev);
-    } catch {
+      setIsFormDialogOpen(false);
+    } catch (err) {
+      console.error("Error saving gejala:", err);
       setError("Gagal menyimpan gejala.");
     }
   };
 
   return (
-    <DialogRoot placement={"center"}>
+    <DialogRoot placement={"center"} open={isFormDialogOpen}>
       <div className="flex min-h-screen">
         <SidebarAdmin />
         <main className="flex-1 p-6 sm:ml-[260px]">
@@ -86,6 +89,7 @@ const GejalaLayout: React.FC = () => {
                     setEditId(null);
                     setIsEditMode(false);
                     setError("");
+                    setIsFormDialogOpen(true); // Open the dialog
                   }}
                 >
                   <FaPlus /> Tambah Gejala
@@ -107,7 +111,7 @@ const GejalaLayout: React.FC = () => {
                 setCode(item.code);
                 setEditId(item.id);
                 setIsEditMode(true);
-                document.getElementById("open-add-dialog")?.click();
+                setIsFormDialogOpen(true); // Open the dialog and populate fields
               }}
             />
           </section>
