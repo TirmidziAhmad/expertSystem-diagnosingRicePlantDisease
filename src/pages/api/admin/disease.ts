@@ -141,42 +141,50 @@ export default async function handler(
           },
         });
 
-        return res.status(200).json(disease);
+        return res.status(201).json(disease);
       }
 
       case "PUT": {
-        const body = req.body as {
-          id: number;
-          image: string;
-          name: string;
-          description: string;
-          symptoms: SymptomInput[];
-          solutions: SolutionInput[];
+        const { image, name, description, symptoms, solutions } =
+          await parseFormData(req);
+
+        const { id } = req.query;
+        if (!id || Array.isArray(id)) {
+          return res.status(400).json({ error: "Invalid disease ID" });
+        }
+
+        const diseaseId = parseInt(id);
+        if (isNaN(diseaseId)) {
+          return res.status(400).json({ error: "Invalid disease ID" });
+        }
+
+        // Prepare update data
+        const updateData: any = {
+          name,
+          description,
+          symptoms: {
+            deleteMany: {}, // Remove all existing symptoms
+            create: symptoms.map((s) => ({
+              symptomId: s.symptomId,
+              probability: s.probability,
+            })),
+          },
+          solutions: {
+            deleteMany: {}, // Remove all existing solutions
+            create: solutions.map((s) => ({
+              solutionId: s.solutionId,
+            })),
+          },
         };
 
-        const { id, image, name, description, symptoms, solutions } = body;
-
-        await prisma.diseaseSymptom.deleteMany({ where: { diseaseId: id } });
-        await prisma.diseaseSolution.deleteMany({ where: { diseaseId: id } });
+        // Only update image if a new one was provided
+        if (image) {
+          updateData.image = image;
+        }
 
         const updatedDisease = await prisma.disease.update({
-          where: { id },
-          data: {
-            image,
-            name,
-            description,
-            symptoms: {
-              create: symptoms.map((s) => ({
-                symptomId: s.symptomId,
-                probability: s.probability,
-              })),
-            },
-            solutions: {
-              create: solutions.map((s) => ({
-                solutionId: s.solutionId,
-              })),
-            },
-          },
+          where: { id: diseaseId },
+          data: updateData,
           include: {
             symptoms: { include: { symptom: true } },
             solutions: { include: { solution: true } },

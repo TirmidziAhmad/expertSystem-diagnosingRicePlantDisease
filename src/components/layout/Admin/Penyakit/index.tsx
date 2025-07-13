@@ -115,6 +115,9 @@ const PenyakitLayout: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       setNewDisease((prev) => ({ ...prev, image: file }));
+    } else if (editMode) {
+      // If in edit mode and no file selected, keep the existing image
+      setNewDisease((prev) => ({ ...prev, image: null }));
     }
   };
 
@@ -212,20 +215,17 @@ const PenyakitLayout: React.FC = () => {
       formData.append("symptoms", JSON.stringify(newDisease.symptoms));
       formData.append("solutions", JSON.stringify(newDisease.solutions));
 
+      // Only append image if it exists (for new) or changed (for edit)
       if (newDisease.image) {
         formData.append("image", newDisease.image);
       }
 
-      const url =
-        editMode && currentDiseaseId
-          ? `/api/admin/disease`
-          : "/api/admin/disease";
+      // Determine the URL and method based on edit mode
+      const url = editMode
+        ? `/api/admin/disease?id=${currentDiseaseId}`
+        : "/api/admin/disease";
 
       const method = editMode ? "PUT" : "POST";
-
-      if (editMode && currentDiseaseId) {
-        formData.append("id", currentDiseaseId.toString());
-      }
 
       const response = await fetch(url, {
         method,
@@ -235,11 +235,12 @@ const PenyakitLayout: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
-          errorData.message ||
+          errorData.error ||
             (editMode ? "Failed to update disease" : "Failed to add disease")
         );
       }
 
+      // Refresh the disease list
       await fetchDiseases();
       resetForm();
       document.getElementById("close-add-dialog")?.click();
@@ -256,11 +257,13 @@ const PenyakitLayout: React.FC = () => {
       setEditMode(true);
       setCurrentDiseaseId(id);
 
+      // Map symptoms to the expected format
       const mappedSymptoms = diseaseToEdit.symptoms.map((s) => ({
         symptomId: s.symptom.id,
         probability: s.probability,
       }));
 
+      // Map solutions to the expected format
       const mappedSolutions = diseaseToEdit.solutions.map((s) => ({
         solutionId: s.solution.id,
       }));
@@ -268,10 +271,12 @@ const PenyakitLayout: React.FC = () => {
       setNewDisease({
         name: diseaseToEdit.name,
         description: diseaseToEdit.description,
-        image: null,
+        image: null, // We'll handle the image separately
         symptoms: mappedSymptoms,
         solutions: mappedSolutions,
       });
+
+      // Open the dialog
       document.getElementById("add-disease-dialog-trigger")?.click();
     }
   };
@@ -287,13 +292,13 @@ const PenyakitLayout: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/disease/${diseaseToDelete}`, {
+      const res = await fetch(`/api/admin/disease?id=${diseaseToDelete}`, {
         method: "DELETE",
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to delete disease");
+        throw new Error(errorData.error || "Failed to delete disease");
       }
 
       setDiseases((prev) => prev.filter((d) => d.id !== diseaseToDelete));
@@ -305,7 +310,6 @@ const PenyakitLayout: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <DialogRoot placement="center">
       <div className="flex min-h-screen">
@@ -313,15 +317,9 @@ const PenyakitLayout: React.FC = () => {
         <main className="flex-1 p-6 sm:ml-[260px] transition-all">
           <Navbar title="Overview Penyakit" />
           <section className="mt-4">
-            {error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
-                {error}
-              </div>
-            )}
             <div className="flex flex-row justify-between">
               <DialogTrigger asChild onClick={() => resetForm()}>
                 <ButtonElement
-                  id="add-disease-dialog-trigger"
                   bg="bg-sand"
                   label={editMode ? "Edit Penyakit" : "Tambah Data Penyakit"}
                   icon={FaPlus}
@@ -408,11 +406,16 @@ const PenyakitLayout: React.FC = () => {
                 />
               </div>
             )}
-            <Input
+            <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              paddingY={1.5}
+              className="block w-full text-sm text-gray-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-md file:border-0
+      file:text-sm file:font-semibold
+      file:bg-teal-50 file:text-teal-700
+      hover:file:bg-teal-100"
             />
             {editMode && (
               <p className="text-sm text-gray-500">
@@ -511,7 +514,7 @@ const PenyakitLayout: React.FC = () => {
       </DialogContent>
 
       {/* Delete Confirmation Dialog */}
-      <DialogRoot open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <DialogRoot open={deleteDialogOpen}>
         <DialogContent className="bg-white text-black max-w-md">
           <DialogHeader>
             <DialogTitle className="font-semibold">
