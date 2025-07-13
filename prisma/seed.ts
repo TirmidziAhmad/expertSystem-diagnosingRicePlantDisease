@@ -44,64 +44,74 @@ async function main() {
       {
         name: "Penyakit Blas Daun",
         description:
-          "Penyakit blas yang disebabkan oleh jamur Magnaporthe oryzae adalah salah satu penyakit paling destruktif pada tanaman padi di dunia. Infeksi biasanya dimulai dengan bercak berbentuk belah ketupat pada daun, yang kemudian berkembang menjadi luka necrotic besar. Jika menyerang batang atau leher malai, penyakit ini dapat menyebabkan malai tidak menghasilkan bulir padi yang sempurna. Penyakit ini berkembang pesat di lingkungan dengan suhu yang fluktuatif, kelembapan tinggi, dan sirkulasi udara yang buruk. Dampaknya sangat signifikan",
-        image: "/bg.png",
+          "Penyebab penyakit blas daun yaitu Cendawan Pyricularia Oryzae. Gejala yang dimiliki penyakit ini yaitu munculnya bercak berwarna coklat abu dan kuning dengan bentuk bulat ujung runcing atau meneyrupai bentuk belah ketupat. Pada tengah-tengah terdapat bercak berwarna putih.",
+        image: "/uploads/blasdaun.png",
       },
       {
         name: "Penyakit Blas Leher",
         description:
-          "Penyakit blas yang disebabkan oleh jamur Magnaporthe oryzae adalah salah satu penyakit paling destruktif pada tanaman padi di dunia. Infeksi biasanya dimulai dengan bercak berbentuk belah ketupat pada daun, yang kemudian berkembang menjadi luka necrotic besar. Jika menyerang batang atau leher malai, penyakit ini dapat menyebabkan malai tidak menghasilkan bulir padi yang sempurna. Penyakit ini berkembang pesat di lingkungan dengan suhu yang fluktuatif, kelembapan tinggi, dan sirkulasi udara yang buruk. Dampaknya sangat signifikan",
-        image: "/bg.png",
+          "Penyebab penyakit blas daun yaitu Cendawan Pyricularia Oryzae. Gejala yang dimiliki penyakit blas leher yaitu pada pangkal malai terdapat bercak berwarna coklat kehitaman pada leher malai, sehingga mengakibatkan malai menjadi patah dan roboh",
+        image: "/uploads/blasleher.png",
       },
       {
         name: "Penyakit Bercak Sempit",
-        description: "A bacterial disease causing wilting and yellowing of leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit blas daun yaitu Cendawan Cercospora Oryzae. Gejala pada penyakit bercak sempit yaitu pada daun hingga pelepah terdapat bercak pendek sempit seperti garis-garis berwarna coklat dengan variasi warna dari coklat terang hingga coklat gelap.",
+        image: "/uploads/bercaksempit.png",
       },
       {
         name: "Penyakit Hawar Pelepah",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit blas daun yaitu Cendawan Rhizoctonia solani. Gejala yang dialami pada penyakit hawar pelepah yaitu terdapat bercak pada pelepah daun yang mula-mula berwarna kelabu kehijau-hijauan, berbentuk oval atau elips dengan panjang 1-3cm, pada pusat bercak warna menjadi putih keabu-abuan dengan tepi berwarna coklat.",
+        image: "/uploads/hawarpelepah.png",
       },
       {
         name: "Penyakit Busuk Pelepah",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit yaitu Cendawan Sarocladium oryzae. Gejala pada penyakit ini yaitu terdapat bercak pada pelepah yang berukuran 0.5cm – 1.5cm, warna abu abu di bagian tengah dan coklat abu di pinggirinya, kemudian bercak dapat melebar menutupi seluruh permukaan pelepah daun, dan mengakibatkan malai tidak munul atau muncul sebagian.",
+        image: "/uploads/busukpelepah.png",
       },
       {
         name: "Hawar Daun Bakteri",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit hawar daun bakteri yaitu Bakteri Xanthomonas pv oryzae. Gejala pada penyakit ini yaitu mula-mula tepi daun tempak garis bercak kebasahan, kemudian berkembang meluas, berwarna hijau keabu-abuan, seluruh daun keriput, dan akhirnya kering seperti hawar dan layu seperti tersiram air panas.",
+        image: "/uploads/hawardaunbakteri.png",
       },
       {
         name: "Bacterial Red Stripe",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit Bacterial Red Stripe adalah Bacterial Acidovorax avinae. Gejala dari penyakit ini yaitu pada daun tampak bergaris berwarna merah kekuningan dan pelepah daun saat pembungaan menjadi tidak serempak sehingga pematangan bulir menjadi tidak serempak.",
+        image: "/uploads/bakteriredstripe.png",
       },
       {
         name: "Bacterial Leaf Streak",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penybab penyakit Bacterial Leaf Streak yaitu Bacterial Xanthomonas oyzae pv. Oryzicola. Gejala yang dialami penyakit ini yaitu terdapat bercak kecil berwarna jingga, yang timbul dimana saja pada helaian daun mirip gejala hawar. ",
+        image: "/uploads/bakterileafstreak.png",
       },
       {
         name: "Penyakit Kerdil Hampa",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit kerdil hampa yaitu i Rice Ragged Stunt Virus (RRSV). Gejala yang dialami penyakit ini yaitu pertumbuhan tanaman kerdil, jumlah anakan banyak, tepi daun bergerigi dan berkeluk-keluk atau sobek-sobek, daun hijau pendek, sempit dan kekuniongan terjadi pembengkakan tulang daun atau pembentukan puru yang berwarna kuning pucar sampai coklat serta terjadi pembelitan daun, malai tidak dapat keluar dengan sempurna dan gabahnya hampa",
+        image: "/uploads/kerdilhampa.png",
       },
       {
         name: "Penyakit Kerdil Rumput Tipe 1",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit kerdil rumput tipe 1 yaitu Rice Grassy Stunt Virus (RGSV). Gejala pada penyakiy ini yaitu pada daun tanaman padi yang terserang virus ini akan menjadi sempit, tanaman akan pendek, kaku, daun berwarna hijau kekuningan dan penuh dengan bercak coklat pada permukaan daun seperti karat.",
+        image: "/uploads/kerdilrumputtipesatu.png",
       },
       {
         name: "Penyakit Kerdil Rumput Tipe 2",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit kerdil rumput tipe 2 yaitu Rice Grassy Stunt Virus (RGSV). Gejala pada penyakit ini yaitu tanaman menjadi sangat kerdil , anakan banyak, daun hijau pucat sampai kuning atau daun-daun sempit berwarna kuning sampai orange, dan daun sempit dengan bintik-bintik karat kecil.",
+        image: "/uploads/kerdilrumputtipedua.png",
       },
       {
         name: "Penyakit Kerdil Tungro",
-        description: "A fungal disease causing brown spots on leaves.",
-        image: "/bg.png",
+        description:
+          "Penyebab penyakit kerdil tungro yaitu Rice Tungro Baciliform Virus (RTBV) dan Rice Tungro Spherical Virus (RTSV). Gejala pada penyakit ini yaitu pada daun muda terjadi perubahan warna menjadi kuning oranye, daun muda agak menggulung, jumlah anakan berkurang, tanaman kerdil dan pertumbuhan terhambat.",
+        image: "/uploads/kerdiltungro.png",
       },
     ],
   });
@@ -111,7 +121,8 @@ async function main() {
     data: [
       {
         code: "G01",
-        description: "Munculnya bercak berwarna coklat abu dan kuning dengan bentuk bulat ujung runcing atau menyerupai bentuk belah ketupat",
+        description:
+          "Munculnya bercak berwarna coklat abu dan kuning dengan bentuk bulat ujung runcing atau menyerupai bentuk belah ketupat",
       },
       {
         code: "G02",
@@ -119,35 +130,43 @@ async function main() {
       },
       {
         code: "G03",
-        description: "Pada pangkal malai terdapat bercak berwarna coklat kehitaman pada leher malai, sehingga mengakibatkan malai menjadi patah dan roboh",
+        description:
+          "Pada pangkal malai terdapat bercak berwarna coklat kehitaman pada leher malai, sehingga mengakibatkan malai menjadi patah dan roboh",
       },
       {
         code: "G04",
-        description: "Pada daun hingga pelepah terdapat bercak pendek sempit seperti garis-garis berwarna coklat dengan variasi warna dari coklat terang hingga coklat gelap",
+        description:
+          "Pada daun hingga pelepah terdapat bercak pendek sempit seperti garis-garis berwarna coklat dengan variasi warna dari coklat terang hingga coklat gelap",
       },
       {
         code: "G05",
-        description: "Terdapat bercak pada pelepah daun yang mula-mula berwarna kelabu kehijau-hijauan, berbentuk oval atau elips dengan panjang 1–3 cm",
+        description:
+          "Terdapat bercak pada pelepah daun yang mula-mula berwarna kelabu kehijau-hijauan, berbentuk oval atau elips dengan panjang 1–3 cm",
       },
       {
         code: "G06",
-        description: "Pada pusat bercak warna menjadi putih keabu-abuan dengan tepi berwarna coklat",
+        description:
+          "Pada pusat bercak warna menjadi putih keabu-abuan dengan tepi berwarna coklat",
       },
       {
         code: "G07",
-        description: "Terdapat bercak pada pelepah yang berukuran 0.5 Cm—1,5 Cm",
+        description:
+          "Terdapat bercak pada pelepah yang berukuran 0.5 Cm—1,5 Cm",
       },
       {
         code: "G08",
-        description: "Warna abu abu di bagian tengah dan coklat abu dipinggirnya.",
+        description:
+          "Warna abu abu di bagian tengah dan coklat abu dipinggirnya.",
       },
       {
         code: "G09",
-        description: "Bercak dapat melebar menutupi seluruh permukaan pelepah daun, mengakibatkan malai tidak muncul atau muncul sebagian",
+        description:
+          "Bercak dapat melebar menutupi seluruh permukaan pelepah daun, mengakibatkan malai tidak muncul atau muncul sebagian",
       },
       {
         code: "G10",
-        description: "Mula-mula pada tepi daun tampak garis bercak kebasahan, kemudian berkembang meluas, berwarna hijau keabu-abuan, seluruh daun keriput, dan akhirnya kering seperti hawar dan layu seperti tersiram air panas",
+        description:
+          "Mula-mula pada tepi daun tampak garis bercak kebasahan, kemudian berkembang meluas, berwarna hijau keabu-abuan, seluruh daun keriput, dan akhirnya kering seperti hawar dan layu seperti tersiram air panas",
       },
       {
         code: "G11",
@@ -155,11 +174,13 @@ async function main() {
       },
       {
         code: "G12",
-        description: "Pelepah daun saat pembungaan menjadi tidak serempak sehingga pematangan bulir menjadi tidak serempak",
+        description:
+          "Pelepah daun saat pembungaan menjadi tidak serempak sehingga pematangan bulir menjadi tidak serempak",
       },
       {
         code: "G13",
-        description: "Terdapat bercak kecil berwarna jingga, yang timbul di mana saja pada helaian daun mirip gejala hawar",
+        description:
+          "Terdapat bercak kecil berwarna jingga, yang timbul di mana saja pada helaian daun mirip gejala hawar",
       },
       {
         code: "G14",
@@ -171,19 +192,23 @@ async function main() {
       },
       {
         code: "G16",
-        description: "Tepi daun bergerigi (ragged) dan berlekuk-lekuk atau sobek- sobek, daun hijau pendek, sempit",
+        description:
+          "Tepi daun bergerigi (ragged) dan berlekuk-lekuk atau sobek- sobek, daun hijau pendek, sempit",
       },
       {
         code: "G17",
-        description: "Kekuningan (klorosis) terjadi pembengkakan tulang daun atau pembentukan puru yang berwarna kuning pucat sampai coklat serta terjadi pembelitan daun (twisting)",
+        description:
+          "Kekuningan (klorosis) terjadi pembengkakan tulang daun atau pembentukan puru yang berwarna kuning pucat sampai coklat serta terjadi pembelitan daun (twisting)",
       },
       {
         code: "G18",
-        description: "Malai tidak dapat keluar dengan sempurna dan gabahnya hampa",
+        description:
+          "Malai tidak dapat keluar dengan sempurna dan gabahnya hampa",
       },
       {
         code: "G19",
-        description: "Pada daun tanaman padi yang terserang virus ini akan menjadi sempit",
+        description:
+          "Pada daun tanaman padi yang terserang virus ini akan menjadi sempit",
       },
       {
         code: "G20",
@@ -195,7 +220,8 @@ async function main() {
       },
       {
         code: "G22",
-        description: "Penuh dengan bercak coklat pada permukaan daun seperti karat",
+        description:
+          "Penuh dengan bercak coklat pada permukaan daun seperti karat",
       },
       {
         code: "G23",
@@ -203,7 +229,8 @@ async function main() {
       },
       {
         code: "G24",
-        description: "Daun hijau pucat sampai kuning atau daun-daun sempit berwarna kuning sampai oranye",
+        description:
+          "Daun hijau pucat sampai kuning atau daun-daun sempit berwarna kuning sampai oranye",
       },
       {
         code: "G25",
@@ -211,7 +238,8 @@ async function main() {
       },
       {
         code: "G26",
-        description: "Pada daun muda terjadi perubahan warna menjadi kuning oranye.",
+        description:
+          "Pada daun muda terjadi perubahan warna menjadi kuning oranye.",
       },
       {
         code: "G27",
@@ -244,7 +272,10 @@ async function main() {
       { description: "Atur drainase dengan baik" }, //11
       { description: "Lakukan pengeringan lahan selama periode bera" }, //12
       { description: "Mengatur jarak tanam" }, //13
-      { description: "Pengairan berselang ketika tanaman sudah mencapai pembentukan malai" },
+      {
+        description:
+          "Pengairan berselang ketika tanaman sudah mencapai pembentukan malai",
+      },
       { description: "Gunakan APH jika masih di bawah ambang kendali" }, //15
       { description: "Pemupukan berimbang" },
       { description: "Kurangi penggunaan pupuk N terlalu tinggi" },
@@ -257,7 +288,10 @@ async function main() {
       { description: "Lakukan pergiliran varietas" },
       { description: "Lakukan pergiliran tanaman" }, //25
       { description: "Gunakan benih yang sehat" },
-      { description: "Gunakan benih varietas tahan wereng hijau dan/ atau virus" },
+      {
+        description:
+          "Gunakan benih varietas tahan wereng hijau dan/ atau virus",
+      },
     ],
   });
 
