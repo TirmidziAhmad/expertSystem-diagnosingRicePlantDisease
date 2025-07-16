@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 
-type MassMap = Map<string, number>;
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,7 +14,6 @@ export default async function handler(
   if (!symptoms || !Array.isArray(symptoms) || symptoms.length === 0) {
     return res.status(400).json({ message: "Symptoms array is required" });
   }
-
   if (!userId || typeof userId !== "number") {
     return res.status(400).json({ message: "User ID is required" });
   }
@@ -31,83 +28,83 @@ export default async function handler(
       return res.status(400).json({ message: "No matching symptoms found" });
     }
 
-    // Buat fungsi untuk membuat belief mass dari 1 gejala
-    function convertSymptomToMass(symptom: (typeof symptomsData)[0]): MassMap {
-      const mass = new Map<string, number>();
-      const total = symptom.diseases.reduce(
-        (sum, ds) => sum + ds.probability,
-        0
-      );
-
-      if (total === 0) return mass;
-
+    const beliefMasses = new Map<string, number>();
+    symptomsData.forEach((symptom) => {
       symptom.diseases.forEach((ds) => {
-        const prob = ds.probability / total;
-        const name = ds.disease.name;
-        mass.set(name, prob);
+        const diseaseName = ds.disease.name;
+        const existingMass = beliefMasses.get(diseaseName) || 0;
+        beliefMasses.set(diseaseName, existingMass + ds.probability);
       });
+    });
 
-      return mass;
+    const totalMass = Array.from(beliefMasses.values()).reduce(
+      (sum, m) => sum + m,
+      0
+    );
+    if (totalMass > 0) {
+      beliefMasses.forEach((mass, disease) => {
+        beliefMasses.set(disease, mass / totalMass);
+      });
     }
 
-    // Gabungkan dua belief mass
-    function combineMasses(m1: MassMap, m2: MassMap): MassMap {
-      const combined = new Map<string, number>();
+    function combineMasses(
+      m1: Map<string, number>,
+      m2: Map<string, number>
+    ): Map<string, number> {
+      const combinedMasses = new Map<string, number>();
       let conflict = 0;
 
-      m1.forEach((m1Val, d1) => {
-        m2.forEach((m2Val, d2) => {
-          const intersection = d1 === d2 ? d1 : null;
-
-          if (intersection) {
-            const existing = combined.get(intersection) || 0;
-            combined.set(intersection, existing + m1Val * m2Val);
+      m1.forEach((m1Value, d1) => {
+        m2.forEach((m2Value, d2) => {
+          if (d1 === d2) {
+            const newMass = m1Value * m2Value;
+            combinedMasses.set(d1, (combinedMasses.get(d1) || 0) + newMass);
           } else {
-            conflict += m1Val * m2Val;
+            conflict += m1Value * m2Value;
           }
         });
       });
 
       if (conflict < 1) {
-        combined.forEach((val, key) => {
-          combined.set(key, val / (1 - conflict));
+        combinedMasses.forEach((mass, disease) => {
+          combinedMasses.set(disease, mass / (1 - conflict));
         });
       }
 
-      return combined;
+      return combinedMasses;
     }
 
-    // Langkah utama: buat mass untuk setiap gejala lalu kombinasikan
-    let combinedMass = convertSymptomToMass(symptomsData[0]);
+    let combinedMass = new Map(beliefMasses);
+    symptomsData.forEach(() => {
+      combinedMass = combineMasses(combinedMass, beliefMasses);
+    });
 
-    for (let i = 1; i < symptomsData.length; i++) {
-      const nextMass = convertSymptomToMass(symptomsData[i]);
-      combinedMass = combineMasses(combinedMass, nextMass);
-    }
+    const belief = new Map<string, number>();
+    combinedMass.forEach((mass, disease) => {
+      belief.set(disease, mass);
+    });
 
-    // Ambil penyakit dengan nilai belief tertinggi
     let mostLikelyDisease: string | null = null;
     let highestBelief = 0;
-    combinedMass.forEach((val, key) => {
-      if (val > highestBelief) {
-        highestBelief = val;
-        mostLikelyDisease = key;
+
+    belief.forEach((bel, disease) => {
+      if (bel > highestBelief) {
+        mostLikelyDisease = disease;
+        highestBelief = bel;
       }
     });
 
     const mostLikelyDiseaseRecord = mostLikelyDisease
       ? await prisma.disease.findUnique({ where: { name: mostLikelyDisease } })
       : null;
-
     const mostLikelyDiseaseId = mostLikelyDiseaseRecord?.id ?? undefined;
 
-    // Simpan ke dalam database konsultasi
     await prisma.consultation.create({
       data: {
         userId,
         userInput: symptoms,
         diseaseId: mostLikelyDiseaseId,
-        results: Object.fromEntries(combinedMass),
+        results: Object.fromEntries(belief),
       },
     });
 
@@ -139,27 +136,22 @@ export default async function handler(
       });
     }
 
-    // Olah hasil untuk menampilkan penyakit tertinggi dan lainnya
     const results = latestConsultation.results;
     let highestDisease = "Unknown";
     let highestValue = 0;
     let highestImage = "";
     const otherDiseases = [];
 
-    if (results && typeof results === "object" && !Array.isArray(results)) {
-      for (const [disease, value] of Object.entries(results)) {
-        if (typeof value === "number") {
-          if (value > highestValue) {
-            if (highestDisease !== "Unknown") {
-              otherDiseases.push({ name: highestDisease, value: highestValue });
-            }
-            highestDisease = disease;
-            highestValue = value;
-            highestImage = latestConsultation.disease?.image || "";
-          } else {
-            otherDiseases.push({ name: disease, value });
-          }
+    for (const [disease, value] of Object.entries(results)) {
+      if (value > highestValue) {
+        if (highestDisease !== "Unknown") {
+          otherDiseases.push({ name: highestDisease, value: highestValue });
         }
+        highestDisease = disease;
+        highestValue = value;
+        highestImage = latestConsultation.disease?.image || "";
+      } else {
+        otherDiseases.push({ name: disease, value });
       }
     }
 
@@ -183,6 +175,6 @@ export default async function handler(
     });
   } catch (error) {
     console.error("Error in disease diagnosis:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 }
